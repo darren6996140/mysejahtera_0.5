@@ -17,6 +17,7 @@
 # *********************************************************
 
 import sqlite3
+import hashlib
 
 #function to create a table named  "user", since data is preloaded, no need to call this function
 def newUserTable():
@@ -29,6 +30,7 @@ def newUserTable():
     # SQL command to create a table in the database
     command = """CREATE TABLE user (
     ICnum VARCHAR (13) PRIMARY KEY NOT NULL,
+    password VARCHAR (128) NOT NULL,
     name VARCHAR (100) NOT NULL,
     age TINYINT(3) NOT NULL,
     phone VARCHAR (12) NOT NULL, 
@@ -47,14 +49,18 @@ def newUserTable():
     # close the connection
     connection.close()
 
-#function to imput new user's data into table "user"
+#function to input new user's data into table "user"
 def newUser():
     connection = sqlite3.connect("mysejahtera0.5.db")
     cursor = connection.cursor()
 
     #Inputs from the user
     print("Please enter the following details: ")
-    ICnum = str(input("IC number: "))
+    ICnum = str(input("IC number (without dash): "))
+    rawPassword = str(input("Password: "))
+    #SHA-512 hashing of password
+    hash_object = hashlib.sha512(rawPassword.encode())
+    password = hash_object.hexdigest()
     name = str(input("Full Name: "))
     age = int(input("Age: "))
     phone = str(input("Phone number: "))
@@ -62,19 +68,17 @@ def newUser():
     postcode = str(input("Postcode: "))
     gender = int(input("Gender (0 for male, 1 for female): "))
   
-    # SQL command to insert data in table "user"
-   # command = 
-  
+    #Insert values above entered from user
     cursor.execute("""
-    INSERT INTO user (ICnum, name, age, phone, address, postcode, gender)
-    VALUES (?,?,?,?,?,?,?)
-    """, (ICnum, name, age, phone, address, postcode, gender))
+    INSERT INTO user (ICnum, name, password, age, phone, address, postcode, gender, userStatus)
+    VALUES (?,?,?,?,?,?,?,?,?)
+    """, (ICnum, name, password, age, phone, address, postcode, gender, 0))
 
-    #To save the changes in the files.
+    #To save the changes in the files
     connection.commit()
-
     connection.close()
 
+#function to export all data in table "user"
 def dataExport():
     connection = sqlite3.connect("mysejahtera0.5.db")
     cursor = connection.cursor()
@@ -85,3 +89,9 @@ def dataExport():
     for i in output:
        print(i)
     connection.close()
+
+def risk():
+    print
+
+def status():
+    print
