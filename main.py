@@ -31,7 +31,7 @@ import math
 def newUserTable():
 
     # connecting to the database
-    connection = sqlite3.connect("mysejahtera0.5.db")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
     # cursor
     cursor = connection.cursor()
   
@@ -59,7 +59,7 @@ def newUserTable():
 
 #function to input new user's data into table "user"
 def newUser():
-    connection = sqlite3.connect("mysejahtera0.5.db")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
     #Inputs from the user
@@ -92,7 +92,7 @@ def login():
     rawPassword = str(input("Password: "))
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
-    connection = sqlite3.connect("mysejahtera0.5.db")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     statement = f"SELECT ICnum from user WHERE ICnum='{ICnum}' AND password = '{password}';"
     cursor.execute(statement)
@@ -105,7 +105,7 @@ def login():
 
 #function to export all data in table "user"
 def dataExport():
-    connection = sqlite3.connect("mysejahtera0.5.db")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
     #Selects everything from table "user"
@@ -122,7 +122,7 @@ def status():
     print
 
 def mainMenuUser():
-    connection = sqlite3.connect("mysejahtera0.5.db")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute("SELECT name FROM user WHERE ")
     name = cursor.fetchall()
