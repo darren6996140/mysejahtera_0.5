@@ -238,7 +238,7 @@ def signup():
     connection.commit()
     connection.close()
 
-    print("Signup Successful")
+    print("Signup successful, you will be redirected shortly.")
     #Redirect to login page
     login()
 
@@ -337,7 +337,9 @@ def userRisk():
     connection.commit()
     connection.close()
 
-    return risk
+    #redirect back to main menu
+    print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
+    mainMenu()
 
 #function for users to update status (UNTESTED)
 def status():
@@ -381,6 +383,10 @@ def status():
     cursor.execute(statement)
     connection.commit()
     connection.close()
+
+    #redirect back to main menu
+    print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
+    mainMenu()
 
 def vaccine():
     print("This will be vaccination")
