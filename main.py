@@ -24,20 +24,33 @@ import hashlib
 #math for mathematical operations
 import math
 
-#_________________________GLOBAL VARIABLES____________________________
+#___________________________GLOBAL VARIABLES___________________________
 active = ""
 
-#_________________________PASSWORDS____________________________
-# (ADMIN) username:admin password: admin
-# username: 012345678910 password: qwertyabcd
-#
-#
-#
-#
-#
-#
+#____________________________PASSWORDS_______________________________
+# 1. username: 010101010101 password: qwertya
+# 2. username: 020202020202 password: qwertyb
+# 3. username: 030303030303 password: qwertyc
+# 4. username: 040404040404 password: qwertyd
+# 5. username: 050505050505 password: qwertye
+# 6. username: 060606060606 password: qwertyf
+# 7. username: 070707070707 password: qwertyg
+# 8. username: 080808080808 password: qwertyh
+# 9. username: 090909090909 password: qwertyi
+# 10. username: 101010101010 password: qwertyj
+# 11. username: 111111111111 password: qwertyk
+# 12. username: 121212121212 password: qwertyl
+# 13. username: 131313131313 password: qwertym
+# 14. username: 141414141414 password: qwertyn
+# 15. username: 151515151515 password: qwertyo
+# 16. username: 161616161616 password: qwertyp
+# 17. username: 171717171717 password: qwertyq
+# 18. username: 181818181818 password: qwertyr
+# 19. username: 191919191919 password: qwertys
+# 20. username: 012345678910 password: qwertyt
+# 21. (ADMIN) username:admin password: admin
 
-#__________________________FUNCTIONS________________________________
+#___________________________FUNCTIONS_________________________________
 
 #********DATABASE FUNCTIONS********
 #function to create a table named  "user", since data is preloaded, no need to call this function
@@ -88,6 +101,58 @@ def newTablePPV():
     connection.commit()
     connection.close()
 
+#function to create a table named  "covid", since data is preloaded, no need to call this function
+def newTableCOVID():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+  
+    # SQL command to create table "covid" in the database
+    command = """CREATE TABLE covid (
+    date DATE PRIMARY KEY NOT NULL,
+    cases INT(6) NOT NULL,
+    recoveries INT(6) NOT NULL,
+    deaths INT(4) NOT NULL,
+    active INT(6) NOT NULL,
+    cumulative INT(10) NOT NULL,
+    tests INT(10) NOT NULL,
+    );"""
+
+    cursor.execute(command)
+    connection.commit()
+    connection.close()
+
+#function to create a table named  "vaccinations", since data is preloaded, no need to call this function
+def newTableVaccinations():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+  
+    # SQL command to create table "vaccinations" in the database
+    command = """CREATE TABLE vaccinations(
+    1dose INT(6) NOT NULL,
+    2dose INT(6) NOT NULL,
+    booster INT(6) NOT NULL,
+    total1dose INT(10) NOT NULL,
+    total2dose INT(10) NOT NULL,
+    totalbooster INT(10) NOT NULL,
+    grandtotal INT(10) NOT NULL,
+    );"""
+
+    cursor.execute(command)
+    connection.commit()
+    connection.close()
+
+#function to add data into table "ppv"
+def addDataPPV():
+    print
+
+#function to add data into table "covid"
+def addDataCOVID():
+    print
+
+#function to add data into table "vaccinations"
+def addDataVaccinations():
+    print
+
 #function to export all data in table "user"
 def dataExportUser():
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -112,7 +177,32 @@ def dataExportPPV():
        print(i)
     connection.close()
 
+#function to export all data in table "covid"
+def dataExportCOVID():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "covid"
+    cursor.execute("SELECT * FROM covid")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export all data in table "vaccinations"
+def dataExportVaccinations():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "vaccinations"
+    cursor.execute("SELECT * FROM vaccinations")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
 #********USER INTERACTION FUNCTIONS********
+
 #~~~~~~~~NORMAL USER~~~~~~~~
 #function to input new user's data into table "user"
 def signup():
@@ -169,6 +259,7 @@ def login():
             mainMenu()
             return active
 
+#function for users to assess risk
 def userRisk():
     global active
     risk = 0
@@ -244,7 +335,7 @@ def userRisk():
     return risk
 
 def status():
-    print("This will be user status")
+    print("This will be health status")
 
 def vaccine():
     print("This will be vaccination")
