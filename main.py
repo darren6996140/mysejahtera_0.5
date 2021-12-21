@@ -10,12 +10,17 @@
 # Member_4: ID | NAME | PHONES
 # *********************************************************
 # Task Distribution
-# Member_1:
-# Member_2:
-# Member_3:
-# Member_4:
+# Member_1: Core coding of the program
+# Member_2: Documentation/Report
+# Member_3: Presentation
+# Member_4: Program testing
 # *********************************************************
 
+#_______________________ACKNOWLEDGEMENTS___________________________
+# https://github.com/darren6996140/mysejahtera_0.5
+# https://www.geeksforgeeks.org/sql-using-python/
+# https://docs.python.org/3/library/hashlib.html
+# https://www.sqlite.org/index.html
 #_________________________MODULE IMPORTS_____________________________
 #sqlite3 for usage of SQLite tables and database to store data
 import sqlite3
@@ -61,7 +66,7 @@ def newTableUser():
     # cursor
     cursor = connection.cursor()
   
-    # SQL command to create table "user" in the database
+    # SQL command to create table "user" in the database (assume postcodes only start with 4 i.e. Selangor based)
     command = """CREATE TABLE user (
    "ICnum" TEXT NOT NULL,
 	"password" TEXT NOT NULL,
@@ -69,7 +74,7 @@ def newTableUser():
 	"age" INTEGER NOT NULL,
 	"phone" TEXT NOT NULL,
 	"address" TEXT NOT NULL,
-	"postcode" TEXT NOT NULL,
+	"postcode" INTEGER NOT NULL,
 	"gender" INTEGER,
 	"risk" INTEGER,
 	"status" INTEGER,
@@ -341,7 +346,7 @@ def userRisk():
     print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#function for users to update status (UNTESTED)
+#!function for users to update status (UNTESTED)
 def status():
     global active
     status = 0
@@ -448,6 +453,18 @@ def exports():
             break
         else:
             print("Unknown command.")
+
+#!function to export table "user" according to risk (may or may not be needed)
+def exportUserByRisk():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "user"
+    cursor.execute("SELECT columns FROM user ORDER BY risk;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
 
 #function to add tables
 def newTable():
@@ -581,7 +598,7 @@ def mainMenuAdmin():
         else:
             print("invalid")
 
-#*****MAIN FUNCTION******
+#*****MAIN FUNCTION******(needed not needed ¯\_(ツ)_/¯)
 def main():
     startMenu()
     login()
