@@ -54,10 +54,11 @@ To make testing easier and save time during presentation, your program shall hav
 i. Never clear screen.
 ii. Pre-load with at least 20 public users (when the program starts).
 iii. Pre-load with at least 3 vaccination centers, each with at least 3 assigned appointment.
-iv. Pre-load with at least an administrator.
+iv. Pre-load with at least an administrator.    [DONE]
 v. Pre-load with at least 3 users each in various postcode, age, risk groups and priority groups.
 You tutor will announce the arrangement and timeslot for the presentation.
-Plagiarism
+
+Plagiarism [DONE (no way in hell)] 
 It is fine to seek help from friends or from online resources when you do the assignment, However, seeking help should not go overboard, to the point of getting (or even paying) someone to complete the assignment partly or fully for you, copying from online resources without understanding, or doing any means with the intention to cheat. For this assignment, plagiarism means the following:
 (a) Turning in a work that, from the examiner’s point of view, you do not sufficiently understand.
 (b) Turning in someone else’s work (whether partly or fully) as your own.
