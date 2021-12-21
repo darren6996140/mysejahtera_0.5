@@ -203,7 +203,10 @@ def mainMenu():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute(f"SELECT name FROM user WHERE ICnum='{active}'")
-    name = cursor.fetchall()
+    oldName = str(cursor.fetchall())
+    #for removing unnecessary characters
+    list=['[','(',']',')','.',"'"] 
+    name ="".join(i for i in oldName if i not in list) 
 
     print("Welcome", name, "please type a number.")
     print("Type 1 for vaccination appointments.")
@@ -247,9 +250,9 @@ def main():
     startMenu()
     login()
     log = login()
-    loginUser = login()
-    loginUser = login()
-    if log == True:
-        mainMenu()
+    #loginUser = login()
+    #loginUser = login()
+    #if log == True:
+    #    mainMenu()
 
 main()
