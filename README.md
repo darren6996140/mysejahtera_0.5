@@ -121,8 +121,3 @@ Q&A handling (5)
 
 Penalty
 Late submission (10m/day)
-
-ToDo:
-Login for users
-SQL for user details
-[no idea]
