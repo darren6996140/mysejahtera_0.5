@@ -29,7 +29,7 @@ active = ""
 
 #_________________________PASSWORDS____________________________
 # (ADMIN) username:admin password: admin
-# username: 030725101499 password:abc123
+# username: 012345678910 password: qwertyabcd
 #
 #
 #
@@ -76,18 +76,12 @@ def newTablePPV():
     cursor = connection.cursor()
   
     # SQL command to create table "ppv" in the database
-    command = """CREATE TABLE user (
-    ICnum VARCHAR (13) PRIMARY KEY NOT NULL,
-    password VARCHAR (128) NOT NULL,
-    name VARCHAR (100) NOT NULL,
-    age TINYINT(3) NOT NULL,
-    phone VARCHAR (12) NOT NULL, 
-    address VARCHAR (200) NOT NULL,
-    postcode VARCHAR (6) NOT NULL,
-    gender TINYINT(1),
-    risk TINYINT(2),
-    status TINYINT(2),
-    userStatus TINYINT(1)
+    command = """CREATE TABLE ppv (
+    idPPV INT (10) PRIMARY KEY NOT NULL,
+    name VARCHAR (255) NOT NULL,
+    location VARCHAR (6) NOT NULL,
+    vaccineBrand VARCHAR (10) NOT NULL,
+    patientsPerDay INT (3) NOT NULL,
     );"""
 
     cursor.execute(command)
@@ -176,39 +170,45 @@ def login():
             return active
 
 def risk():
-    print("abc")
+    print("----------------------------RISK ASSESSMENT----------------------------\n")
+    print("To ensure everyone will recieve their COVID-19 vaccine accordingly, you are advised to carry out a risk assesment.")
+    print("Please answer the following questions truthfully.")
 
 def status():
-    print
+    print("This will be user status")
 
 def vaccine():
-    print("abc")
+    print("This will be vaccination")
 
 def updates():
-    print
+    print("This will be COVID-19 updates")
 
 def personalInfo():
-    print("abc")
+    print("This will be user's personal info")
 
 def userManage():
-    print
+    print("This will be user management")
 
 def PPVManage():
-    print("abc")
+    print("This will be PPV management")
 
 def vaccineManage():
-    print
+    print("This will be vaccination management")
 
-def userRisk():
-    print("abc")
+def riskManage():
+    print("This will be user risk analysis")
+
+def updatesManage():
+    print("This will manage COVID-19 updates")
 
 def exports():
-    print   
+    print("This will export data")
             
 #~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
 def loginAdmin():
-    ICnum = str(input("Enter IC number: "))
+    print("----------------------------ADMIN LOGIN----------------------------\n")
+    ICnum = str(input("Enter ID: "))
     rawPassword = str(input("Password: "))
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
@@ -219,8 +219,8 @@ def loginAdmin():
     if not cursor.fetchone():
         print("Login failed, please try again.")
     else:
+        connection.close()
         mainMenuAdmin()
-    connection.close()
 
 #********MENUS FUNCTIONS********
 #function for menu when first running the program
@@ -289,7 +289,8 @@ def mainMenuAdmin():
     print("Type 2 for PPV management.")
     print("Type 3 for vaccination management.")
     print("Type 4 for user risk management.")
-    print("Type 5 for data exports.")
+    print("Type 5 for COVID-19 updates management.")
+    print("Type 6 for data exports.")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -303,9 +304,12 @@ def mainMenuAdmin():
             vaccineManage()
             break
         elif num == 4:
-            userRisk()
+            riskManage()
             break
         elif num == 5:
+            updatesManage()
+            break
+        elif num == 6:
             exports()
             break
         else:
