@@ -179,11 +179,11 @@ def userRisk():
 
     overseas = str(input("Have you been outside of the country in the past 14 days?\n"))
     if overseas == "Y":
-        risk = risk + 0.8
+        risk = risk + 0.6
     
     CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
     if CContact == "Y":
-        risk = risk + 0.5
+        risk = risk + 0.6
 
     age = str(input("Are you above 60 years old?\n"))
     if age == "Y":
@@ -195,19 +195,19 @@ def userRisk():
     
     hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
     if hypertension == "Y":
-        risk = risk + 0.5
+        risk = risk + 0.6
 
     immuneCompromised = str(input("Are you Immunocompromised?\n"))
     if immuneCompromised == "Y":
-        risk = risk + 0.4
+        risk = risk + 0.5
 
     obese = str(input("Are you obese? (BMI>35)\n"))
     if obese == "Y":
-        risk = risk + 0.4
+        risk = risk + 0.6
     
     disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
     if disease == "Y":
-        risk = risk + 0.4
+        risk = risk + 0.5
 
     substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
     if substance == "Y":
@@ -217,9 +217,23 @@ def userRisk():
     if pregnant == "Y":
         risk = risk + 0.4
 
+    print("Please state your occupation.")
+    print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.")
+    
+    while True:    
+        job = int(input("Enter here: "))
+        if job > 0 and job < 6:
+            risk = risk + job/10
+            print(risk)
+            break
+        else:
+            print("Invalid number, please try again.")
+            
+    #rounds down the risk to an integer
     risk = math.floor(risk)
     print("Your current risk is", risk)
 
+    #updates the risk of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     statement = f"UPDATE user SET risk='{risk}' WHERE ICnum = '{active}';"
