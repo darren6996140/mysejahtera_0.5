@@ -119,6 +119,7 @@ def dataExportPPV():
     connection.close()
 
 #********USER INTERACTION FUNCTIONS********
+#~~~~~~~~NORMAL USER~~~~~~~~
 #function to input new user's data into table "user"
 def signup():
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -157,7 +158,7 @@ def login():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-
+    print("\n----------------------------LOGIN----------------------------\n")
     while True:
         ICnum = str(input("Enter IC number: "))
         rawPassword = str(input("Password: "))
@@ -174,6 +175,37 @@ def login():
             mainMenu()
             return active
 
+def risk():
+    print("abc")
+
+def status():
+    print
+
+def vaccine():
+    print("abc")
+
+def updates():
+    print
+
+def personalInfo():
+    print("abc")
+
+def userManage():
+    print
+
+def PPVManage():
+    print("abc")
+
+def vaccineManage():
+    print
+
+def userRisk():
+    print("abc")
+
+def exports():
+    print   
+            
+#~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
 def loginAdmin():
     ICnum = str(input("Enter IC number: "))
@@ -187,52 +219,20 @@ def loginAdmin():
     if not cursor.fetchone():
         print("Login failed, please try again.")
     else:
-        print("Welcome!")
         mainMenuAdmin()
     connection.close()
 
-def risk():
-    print("abc")
-
-def status():
-    print
-
 #********MENUS FUNCTIONS********
-def mainMenu():
-    global active
-    connection = sqlite3.connect("mysejahtera_0.5.db")
-    cursor = connection.cursor()
-    cursor.execute(f"SELECT name FROM user WHERE ICnum='{active}'")
-    oldName = str(cursor.fetchall())
-    #for removing unnecessary characters
-    list=['[','(',']',')','.',"'"] 
-    name ="".join(i for i in oldName if i not in list) 
-
-    print("Welcome", name, "please type a number.")
-    print("Type 1 for vaccination appointments.")
-    print("Type 2 for risk assesment.")
-    print("Type 3 for current COVID-19 updates.")
-    print("Type 4 for updating personal information.")
-
-    connection.close()
-
-def mainMenuAdmin():
-    print("Welcome admin.")
-    print("Type 1 for user management.")
-    print("Type 2 for PPV management.")
-    print("Type 3 for vaccination management.")
-    print("Type 4 for user risk management.")
-    print("Type 5 for data exports.")
-
+#function for menu when first running the program
 def startMenu():
-    print("-------------------------------------------------------------")
+    print("\n-------------------------------------------------------------\n")
     print("Welcome to MySejahtera 0.5!")
     print("Enter 1 for login.")
     print("Enter 2 for sign up.")
     print("Enter 3 for admin login.")
     while True:
         num = int(input("Enter a number: "))
-        print("-------------------------------------------------------------")
+        print("\n-------------------------------------------------------------\n")
         if num == 1:
             login()
             break
@@ -245,14 +245,80 @@ def startMenu():
         else:
             print("invalid")
 
+#function for menu when user successfully login
+def mainMenu():
+    global active
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    cursor.execute(f"SELECT name FROM user WHERE ICnum='{active}'")
+    oldName = str(cursor.fetchall())
+    #for removing unnecessary characters
+    list=['[','(',']',')','.',"'"] 
+    name ="".join(i for i in oldName if i not in list) 
+
+    print("----------------------------MAIN MENU----------------------------\n")
+    print("Welcome", name, "please type a number.\n")
+    print("Type 1 for vaccination appointments.")
+    print("Type 2 for risk assesment.")
+    print("Type 3 for current COVID-19 updates.")
+    print("Type 4 for updating personal information.\n")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            vaccine()
+            break
+        elif num == 2:
+            risk()
+            break
+        elif num == 3:
+            updates()
+            break
+        elif num == 4:
+            personalInfo()
+            break
+        else:
+            print("invalid")
+    connection.close()
+
+#function for menu when admin logged in
+def mainMenuAdmin():
+    print("----------------------------ADMIN MENU----------------------------\n")
+    print("Welcome admin.")
+    print("Type 1 for user management.")
+    print("Type 2 for PPV management.")
+    print("Type 3 for vaccination management.")
+    print("Type 4 for user risk management.")
+    print("Type 5 for data exports.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            userManage()
+            break
+        elif num == 2:
+            PPVManage()
+            break
+        elif num == 3:
+            vaccineManage()
+            break
+        elif num == 4:
+            userRisk()
+            break
+        elif num == 5:
+            exports()
+            break
+        else:
+            print("invalid")
+
 #*****MAIN FUNCTION******
 def main():
     startMenu()
     login()
     log = login()
-    #loginUser = login()
-    #loginUser = login()
-    #if log == True:
-    #    mainMenu()
+    loginUser = login()
+    loginUser = login()
+    if log == True:
+        mainMenu()
 
-main()
+startMenu()
