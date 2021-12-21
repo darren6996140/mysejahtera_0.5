@@ -73,7 +73,7 @@ def newTableUser():
 	"gender" INTEGER,
 	"risk" INTEGER,
 	"status" INTEGER,
-	"userStatus" NTEGER,
+	"userStatus" INTEGER,
     PRIMARY KEY("ICnum")
     );"""
     
@@ -136,7 +136,7 @@ def newTableVaccinations():
     "2dose" INTEGER NOT NULL,
     "booster" INTEGER NOT NULL,
     "total1dose" INTEGER NOT NULL,
-   "total2dose" INTEGER NOT NULL,
+    "total2dose" INTEGER NOT NULL,
     "totalbooster" INTEGER NOT NULL,
     "grandtotal" INTEGER NOT NULL,
     PRIMARY KEY("date")
@@ -430,8 +430,63 @@ def riskManage():
 def updatesManage():
     print("This will manage COVID-19 updates")
 
+#function to select which table to export
 def exports():
-    print("This will export data")
+    instruct = str(input("What table would you like to export? (user, ppv, covid, vaccination)"))
+    while True:
+        if instruct == "user":
+            dataExportUser()
+            break
+        elif instruct == "ppv":
+            dataExportPPV()
+            break
+        elif instruct == "covid":
+            dataExportCOVID()
+            break
+        elif instruct == "vaccination":
+            dataExportVaccinations()
+            break
+        else:
+            print("Unknown command.")
+
+#function to add tables
+def newTable():
+    instruct = str(input("What table would you like to add? (user, ppv, covid, vaccination)"))
+    while True:
+        if instruct == "user":
+            newTableUser()
+            print ("Table 'user' with primary key ICnum with attributes ICnum, password, name, age, phone, address, postcode, gender, risk, status, userStatus created.")
+            break
+        elif instruct == "ppv":
+            newTablePPV()
+            print ("Table 'ppv' with primary key idPPV with attributes name, location, vaccineBrand, patientsPerDay created.")
+            break
+        elif instruct == "covid":
+            newTableCOVID()
+            print ("Table 'covid' with primary key date with attributes cases, recoveries, deaths, active, cumulative, tests created.")
+            break
+        elif instruct == "vaccination":
+            newTableVaccinations()
+            print ("Table 'vaccinations' with primary key date with attributes 1dose, 2dose, booster, total1dose, total2dose, totalbooster, grandtotal created.")
+            break
+        else:
+            print("Unknown command.")
+
+#function to select which table to add data to
+def addData():
+    instruct = str(input("What table would you like to add data to? (ppv, covid, vaccination)"))
+    while True:
+        if instruct == "ppv":
+            addDataPPV()
+            break
+        elif instruct == "covid":
+            addDataCOVID()
+            break
+        elif instruct == "vaccination":
+            addDataVaccinations()
+            break
+        else:
+            print("Unknown command.")
 
 #********MENUS FUNCTIONS********
 #function for menu when first running the program
