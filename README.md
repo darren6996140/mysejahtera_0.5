@@ -10,7 +10,7 @@ For public user:
 For administrator, login to:
 1. Categorize the public users into high-risk or low-risk based on their medical history.
 2. Categorize the public users into priority ranking (1 to 5, with higher the value higher priority) based on their occupations.
-3. Create vaccination centers: location and capacity per hour (i.e., how many individuals can be vaccinated in an hour).
+3. Create vaccination centers: location and capacity per hour (i.e., how many individuals can be vaccinated in an hour). [DONE]
 4. Set appointment for public users by assigning vaccination center with specific date and time.
 5. Sort the public users according to their postcode, age, Covid-19 status, priority, group, etc.
 6. Generate the list of assigned appointments for a vaccination center and sorted by date and time, containing users’ name, ID, RSVP, phone and risk group.
