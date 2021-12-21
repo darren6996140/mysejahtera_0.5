@@ -26,7 +26,6 @@ import math
 
 #_________________________GLOBAL VARIABLES____________________________
 active = ""
-risk = 0
 
 #_________________________PASSWORDS____________________________
 # (ADMIN) username:admin password: admin
@@ -121,7 +120,7 @@ def signup():
     cursor = connection.cursor()
 
     #Inputs from the user
-    print("Please enter the following details: ")
+    print("Please enter the following details: \n")
     ICnum = str(input("IC number (without dash): "))
     rawPassword = str(input("Password: "))
     #SHA-512 hashing of password
@@ -171,54 +170,63 @@ def login():
             return active
 
 def userRisk():
-    global risk
+    global active
+    risk = 0
     print("----------------------------RISK ASSESSMENT----------------------------\n")
     print("To ensure everyone will recieve their COVID-19 vaccine accordingly, you are advised to carry out a risk assesment.")
     print("Your risk will be displayed in a number from 1-5.")
     print("Please answer the following questions truthfully by answering either 'Y' for yes or 'N' for no.\n")
 
     overseas = str(input("Have you been outside of the country in the past 14 days?\n"))
-    if overseas == "Y" or "y":
+    if overseas == "Y":
         risk = risk + 0.8
     
     CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
-    if CContact == "Y" or "y":
+    if CContact == "Y":
         risk = risk + 0.5
 
     age = str(input("Are you above 60 years old?\n"))
-    if age == "Y" or "y":
+    if age == "Y":
         risk = risk + 0.5
 
     diabetes = str(input("Are you diabetic?\n"))
-    if diabetes == "Y" or "y":
+    if diabetes == "Y":
         risk = risk + 0.7
     
     hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
-    if hypertension == "Y" or "y":
+    if hypertension == "Y":
         risk = risk + 0.5
 
     immuneCompromised = str(input("Are you Immunocompromised?\n"))
-    if immuneCompromised == "Y" or "y":
+    if immuneCompromised == "Y":
         risk = risk + 0.4
 
     obese = str(input("Are you obese? (BMI>35)\n"))
-    if obese == "Y" or "y":
+    if obese == "Y":
         risk = risk + 0.4
     
     disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
-    if disease == "Y" or "y":
+    if disease == "Y":
         risk = risk + 0.4
 
     substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
-    if substance == "Y" or "y":
+    if substance == "Y":
         risk = risk + 0.4
 
     pregnant = str(input("Are you pregnant?\n"))
-    if pregnant == "Y" or "y":
+    if pregnant == "Y":
         risk = risk + 0.4
 
     risk = math.floor(risk)
     print("Your current risk is", risk)
+
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    statement = f"UPDATE user SET risk='{risk}' WHERE ICnum = '{active}';"
+    cursor.execute(statement)
+    connection.commit()
+    connection.close()
+
     return risk
 
 def status():
@@ -273,10 +281,10 @@ def loginAdmin():
 #function for menu when first running the program
 def startMenu():
     print("\n-------------------------------------------------------------\n")
-    print("Welcome to MySejahtera 0.5!")
+    print("Welcome to MySejahtera 0.5!\n")
     print("Enter 1 for login.")
     print("Enter 2 for sign up.")
-    print("Enter 3 for admin login.")
+    print("Enter 3 for admin login.\n")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -372,5 +380,4 @@ def main():
     if log ==True:
         mainMenu()
 
-userRisk()
-print(risk)
+startMenu()
