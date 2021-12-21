@@ -3,7 +3,7 @@ Task:
 The app is to include the basic features listed below:
 For public user:
 1. Sign up an account with their personal information (e.g., name, age, ID, phone, postcode, address, etc.), [DONE]
-2. Login to enter/update medical history, Covid-19 status (i.e., under-quarantine or normal) and occupations.
+2. Login to enter/update medical history, Covid-19 status (i.e., under-quarantine or normal) and occupations. [DONE]
 3. Login to check their appointment date, time and location.
 4. Login to R.S.V.P to the assigned appointment (i.e., yes or no).
 
