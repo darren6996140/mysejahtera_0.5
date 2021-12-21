@@ -2,7 +2,7 @@ Instructions:
 Task:
 The app is to include the basic features listed below:
 For public user:
-1. Sign up an account with their personal information (e.g., name, age, ID, phone, postcode, address, etc.),
+1. Sign up an account with their personal information (e.g., name, age, ID, phone, postcode, address, etc.), [DONE]
 2. Login to enter/update medical history, Covid-19 status (i.e., under-quarantine or normal) and occupations.
 3. Login to check their appointment date, time and location.
 4. Login to R.S.V.P to the assigned appointment (i.e., yes or no).
@@ -19,8 +19,9 @@ Some advance features (but not limited to the list below):
 1. To auto-categorize the public users into high-risk and low-risk group based on medical history (and skip no. 1 (admin)) and/or priority ranking based on occupation (and skip no. 2 (admin)).
 2. Auto-assigned appointment when new vaccination slot/date/center is made available by the administrator.
 3. To check if a vaccination center has empty slots (certain date and time has not reached the maximum capacity) and/or over-booking (number of appointments are more than the capacity) and notify the administrators.
-4. To store all available data in persistent storage file (or text file).
-5. Graphical user interface.
+4. To store all available data in persistent storage file (or text file). [DONE]
+5. Graphical user interface. [N/A]
+Extra: 1. Hashing passwords. [DONE]
 
 Deliverables
 You are to submit the following for this assignment:
