@@ -63,17 +63,18 @@ def newTableUser():
   
     # SQL command to create table "user" in the database
     command = """CREATE TABLE user (
-    ICnum VARCHAR (13) PRIMARY KEY NOT NULL,
-    password VARCHAR (128) NOT NULL,
-    name VARCHAR (100) NOT NULL,
-    age TINYINT(3) NOT NULL,
-    phone VARCHAR (12) NOT NULL, 
-    address VARCHAR (200) NOT NULL,
-    postcode VARCHAR (6) NOT NULL,
-    gender TINYINT(1),
-    risk TINYINT(2),
-    status TINYINT(2),
-    userStatus TINYINT(1)
+   "ICnum" TEXT NOT NULL,
+	"password" TEXT NOT NULL,
+	"name" TEXT NOT NULL,
+	"age" INTEGER NOT NULL,
+	"phone" TEXT NOT NULL,
+	"address" TEXT NOT NULL,
+	"postcode" TEXT NOT NULL,
+	"gender" INTEGER,
+	"risk" INTEGER,
+	"status" INTEGER,
+	"userStatus" NTEGER,
+    PRIMARY KEY("ICnum")
     );"""
     
     # execute the statement
@@ -90,11 +91,12 @@ def newTablePPV():
   
     # SQL command to create table "ppv" in the database
     command = """CREATE TABLE ppv (
-    idPPV INT (10) PRIMARY KEY NOT NULL,
-    name VARCHAR (255) NOT NULL,
-    location VARCHAR (6) NOT NULL,
-    vaccineBrand VARCHAR (10) NOT NULL,
-    patientsPerDay INT (3) NOT NULL,
+    "idPPV" INTEGER NOT NULL,
+    "name" TEXT NOT NULL,
+    "location" TEXT NOT NULL,
+    "vaccineBrand" TEXT NOT NULL,
+    "patientsPerDay" INTEGER NOT NULL,
+    PRIMARY KEY("idPPV")
     );"""
 
     cursor.execute(command)
@@ -108,13 +110,14 @@ def newTableCOVID():
   
     # SQL command to create table "covid" in the database
     command = """CREATE TABLE covid (
-    date DATE PRIMARY KEY NOT NULL,
-    cases INT(6) NOT NULL,
-    recoveries INT(6) NOT NULL,
-    deaths INT(4) NOT NULL,
-    active INT(6) NOT NULL,
-    cumulative INT(10) NOT NULL,
-    tests INT(10) NOT NULL,
+    "date" TEXT NOT NULL,
+    "cases" INTEGER NOT NULL,
+    "recoveries" INTEGER NOT NULL,
+    "deaths" INTEGER NOT NULL,
+    "active" INTEGER NOT NULL,
+    "cumulative" INTEGER NOT NULL,
+    "tests" INTEGER NOT NULL,
+    PRIMARY KEY("date")
     );"""
 
     cursor.execute(command)
@@ -128,13 +131,15 @@ def newTableVaccinations():
   
     # SQL command to create table "vaccinations" in the database
     command = """CREATE TABLE vaccinations(
-    1dose INT(6) NOT NULL,
-    2dose INT(6) NOT NULL,
-    booster INT(6) NOT NULL,
-    total1dose INT(10) NOT NULL,
-    total2dose INT(10) NOT NULL,
-    totalbooster INT(10) NOT NULL,
-    grandtotal INT(10) NOT NULL,
+    "date" TEXT NOT NULL
+    "1dose" INTEGER NOT NULL,
+    "2dose" INTEGER NOT NULL,
+    "booster" INTEGER NOT NULL,
+    "total1dose" INTEGER NOT NULL,
+   "total2dose" INTEGER NOT NULL,
+    "totalbooster" INTEGER NOT NULL,
+    "grandtotal" INTEGER NOT NULL,
+    PRIMARY KEY("date")
     );"""
 
     cursor.execute(command)
@@ -322,7 +327,7 @@ def userRisk():
             
     #rounds down the risk to an integer
     risk = math.floor(risk)
-    print("Your current risk is", risk)
+    print("Your updated risk is", risk)
 
     #updates the risk of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -334,8 +339,48 @@ def userRisk():
 
     return risk
 
+#function for users to update status (UNTESTED)
 def status():
-    print("This will be health status")
+    global active
+    status = 0
+    print("----------------------------COVID 19 STATUS----------------------------\n")
+    print("Please report your current COVID-19 status here.")
+    print("Please type out your current status whether it be 'No symptoms', 'Casual contact', 'Close contact', 'Person Under Surveillance', 'Home Quarantine Order',  'COVID-19 positive, mild symptoms' or 'COVID-19 positive, severe symptoms'\n")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    while True:
+        enter = str(input("Please enter status: "))
+        if enter == "No symptoms":
+            status = 1
+            break
+        elif enter == "Casual contact":
+            status = 2
+            break
+        elif enter == "Close Contact":
+            status = 3
+            break
+        elif enter == "Person Under Surveillance":
+            status = 4
+            break
+        elif enter == "Home Quarantine Order":
+            status = 5
+            break
+        elif enter == "COVID-19 positive, mild symptoms":
+            status = 6
+            break
+        elif enter == "COVID-19 positive, severe symptoms":
+            status = 7
+            break
+        else:
+            print("Unknown status.")
+
+    #updates the status of the user in the database 
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    statement = f"UPDATE user SET status='{status}' WHERE ICnum = '{active}';"
+    cursor.execute(statement)
+    connection.commit()
+    connection.close()
 
 def vaccine():
     print("This will be vaccination")
@@ -345,24 +390,6 @@ def updates():
 
 def personalInfo():
     print("This will be user's personal info")
-
-def userManage():
-    print("This will be user management")
-
-def PPVManage():
-    print("This will be PPV management")
-
-def vaccineManage():
-    print("This will be vaccination management")
-
-def riskManage():
-    print("This will be user risk analysis")
-
-def updatesManage():
-    print("This will manage COVID-19 updates")
-
-def exports():
-    print("This will export data")
             
 #~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
@@ -381,6 +408,24 @@ def loginAdmin():
     else:
         connection.close()
         mainMenuAdmin()
+
+def userManage():
+    print("This will be user management")
+
+def PPVManage():
+    print("This will be PPV management")
+
+def vaccineManage():
+    print("This will be vaccination management")
+
+def riskManage():
+    print("This will be user risk analysis")
+
+def updatesManage():
+    print("This will manage COVID-19 updates")
+
+def exports():
+    print("This will export data")
 
 #********MENUS FUNCTIONS********
 #function for menu when first running the program
