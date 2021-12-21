@@ -173,7 +173,7 @@ def userRisk():
     global active
     risk = 0
     print("----------------------------RISK ASSESSMENT----------------------------\n")
-    print("To ensure everyone will recieve their COVID-19 vaccine accordingly, you are advised to carry out a risk assesment.")
+    print("To ensure everyone will receive their COVID-19 vaccine accordingly, you are advised to carry out a risk assesment.")
     print("Your risk will be displayed in a number from 1-5.")
     print("Please answer the following questions truthfully by answering either 'Y' for yes or 'N' for no.\n")
 
