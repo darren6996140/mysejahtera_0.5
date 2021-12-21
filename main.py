@@ -26,6 +26,7 @@ import math
 
 #_________________________GLOBAL VARIABLES____________________________
 active = ""
+risk = 0
 
 #_________________________PASSWORDS____________________________
 # (ADMIN) username:admin password: admin
@@ -169,10 +170,56 @@ def login():
             mainMenu()
             return active
 
-def risk():
+def userRisk():
+    global risk
     print("----------------------------RISK ASSESSMENT----------------------------\n")
     print("To ensure everyone will recieve their COVID-19 vaccine accordingly, you are advised to carry out a risk assesment.")
-    print("Please answer the following questions truthfully.")
+    print("Your risk will be displayed in a number from 1-5.")
+    print("Please answer the following questions truthfully by answering either 'Y' for yes or 'N' for no.\n")
+
+    overseas = str(input("Have you been outside of the country in the past 14 days?\n"))
+    if overseas == "Y" or "y":
+        risk = risk + 0.8
+    
+    CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
+    if CContact == "Y" or "y":
+        risk = risk + 0.5
+
+    age = str(input("Are you above 60 years old?\n"))
+    if age == "Y" or "y":
+        risk = risk + 0.5
+
+    diabetes = str(input("Are you diabetic?\n"))
+    if diabetes == "Y" or "y":
+        risk = risk + 0.7
+    
+    hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
+    if hypertension == "Y" or "y":
+        risk = risk + 0.5
+
+    immuneCompromised = str(input("Are you Immunocompromised?\n"))
+    if immuneCompromised == "Y" or "y":
+        risk = risk + 0.4
+
+    obese = str(input("Are you obese? (BMI>35)\n"))
+    if obese == "Y" or "y":
+        risk = risk + 0.4
+    
+    disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
+    if disease == "Y" or "y":
+        risk = risk + 0.4
+
+    substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
+    if substance == "Y" or "y":
+        risk = risk + 0.4
+
+    pregnant = str(input("Are you pregnant?\n"))
+    if pregnant == "Y" or "y":
+        risk = risk + 0.4
+
+    risk = math.floor(risk)
+    print("Your current risk is", risk)
+    return risk
 
 def status():
     print("This will be user status")
@@ -269,7 +316,7 @@ def mainMenu():
             vaccine()
             break
         elif num == 2:
-            risk()
+            userRisk()
             break
         elif num == 3:
             updates()
@@ -322,7 +369,8 @@ def main():
     log = login()
     loginUser = login()
     loginUser = login()
-    if log == True:
+    if log ==True:
         mainMenu()
 
-startMenu()
+userRisk()
+print(risk)
