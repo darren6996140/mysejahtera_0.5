@@ -21,6 +21,7 @@
 # https://www.geeksforgeeks.org/sql-using-python/
 # https://docs.python.org/3/library/hashlib.html
 # https://www.sqlite.org/index.html
+
 #_________________________MODULE IMPORTS_____________________________
 #sqlite3 for usage of SQLite tables and database to store data
 import sqlite3
@@ -57,7 +58,8 @@ active = ""
 
 #___________________________FUNCTIONS_________________________________
 
-#********DATABASE FUNCTIONS********
+#*************************DATABASE FUNCTIONS*************************
+#>>>>>>>>>>>>>CREATING TABLES>>>>>>>>>>>>>
 #function to create a table named  "user", since data is preloaded, no need to call this function
 def newTableUser():
 
@@ -96,24 +98,24 @@ def newTablePPV():
   
     # SQL command to create table "ppv" in the database
     command = """CREATE TABLE ppv (
-    "idPPV" INTEGER NOT NULL,
+    "postcode" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
     "location" TEXT NOT NULL,
     "vaccineBrand" TEXT NOT NULL,
     "patientsPerDay" INTEGER NOT NULL,
-    PRIMARY KEY("idPPV")
+    PRIMARY KEY("postcode")
     );"""
 
     cursor.execute(command)
     connection.commit()
     connection.close()
 
-#function to create a table named  "covid", since data is preloaded, no need to call this function
-def newTableCOVID():
+#function to create a table named  "covidstats", since data is preloaded, no need to call this function
+def newTableCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
   
-    # SQL command to create table "covid" in the database
+    # SQL command to create table "covidstats" in the database
     command = """CREATE TABLE covid (
     "date" TEXT NOT NULL,
     "cases" INTEGER NOT NULL,
@@ -129,19 +131,19 @@ def newTableCOVID():
     connection.commit()
     connection.close()
 
-#function to create a table named  "vaccinations", since data is preloaded, no need to call this function
-def newTableVaccinations():
+#function to create a table named  "vaccinationstats", since data is preloaded, no need to call this function
+def newTableVaccinationStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
   
-    # SQL command to create table "vaccinations" in the database
-    command = """CREATE TABLE vaccinations(
+    # SQL command to create table "vaccinationstats" in the database
+    command = """CREATE TABLE vaccinationstats(
     "date" TEXT NOT NULL
-    "1dose" INTEGER NOT NULL,
-    "2dose" INTEGER NOT NULL,
+    "dose1" INTEGER NOT NULL,
+    "dose2" INTEGER NOT NULL,
     "booster" INTEGER NOT NULL,
-    "total1dose" INTEGER NOT NULL,
-    "total2dose" INTEGER NOT NULL,
+    "totaldose1" INTEGER NOT NULL,
+    "totaldose2" INTEGER NOT NULL,
     "totalbooster" INTEGER NOT NULL,
     "grandtotal" INTEGER NOT NULL,
     PRIMARY KEY("date")
@@ -151,25 +153,97 @@ def newTableVaccinations():
     connection.commit()
     connection.close()
 
+#>>>>>>>>>>>>>ADDING DATA>>>>>>>>>>>>>
 #function to add data into table "ppv"
 def addDataPPV():
     print
 
-#function to add data into table "covid"
-def addDataCOVID():
+#function to add data into table "covidstats"
+def addDataCOVIDStats():
     print
 
-#function to add data into table "vaccinations"
-def addDataVaccinations():
+#function to add data into table "vaccinationstats"
+def addDataVaccinationStats():
     print
+
+#>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
+#function to choose what should it be sorted by
+def dataExportUser():
+    instruct = str(input("How should the table be sorted? (normal, risk, status, age, postcode)"))
+    while True:
+        if instruct == "normal":
+            dataExportUserNormal()
+            break
+        elif instruct == "risk":
+            dataExportUserRisk()
+            break
+        elif instruct == "status":
+            dataExportUserStatus()
+            break
+        elif instruct == "age":
+            dataExportUserAge()
+            break
+        elif instruct == "postcode":
+            dataExportUserPostcode()
+            break
+        else:
+            print("Unknown command.")
 
 #function to export all data in table "user"
-def dataExportUser():
+def dataExportUserNormal():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
     #Selects everything from table "user"
     cursor.execute("SELECT * FROM user")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export table "user" according to risk
+def dataExportUserRisk():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "user" and sorts risk by ascending order
+    cursor.execute("SELECT columns FROM user ORDER BY risk;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export table "user" according to status
+def dataExportUserStatus():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "user" and sorts status by ascending order
+    cursor.execute("SELECT columns FROM user ORDER BY status;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export table "user" according to age
+def dataExportUserAge():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "user" and sorts age by ascending order
+    cursor.execute("SELECT columns FROM user ORDER BY age;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export table "user" according to postcode
+def dataExportUserPostcode():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "user" and sorts postcode by ascending order
+    cursor.execute("SELECT columns FROM user ORDER BY postcode;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -187,31 +261,31 @@ def dataExportPPV():
        print(i)
     connection.close()
 
-#function to export all data in table "covid"
-def dataExportCOVID():
+#function to export all data in table "covidstats"
+def dataExportCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    #Selects everything from table "covid"
-    cursor.execute("SELECT * FROM covid")
+    #Selects everything from table "covidstats"
+    cursor.execute("SELECT * FROM covidstats")
     output = cursor.fetchall()
     for i in output:
        print(i)
     connection.close()
 
-#function to export all data in table "vaccinations"
-def dataExportVaccinations():
+#function to export all data in table "vaccinationstats"
+def dataExportVaccinationStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    #Selects everything from table "vaccinations"
-    cursor.execute("SELECT * FROM vaccinations")
+    #Selects everything from table "vaccinationstats"
+    cursor.execute("SELECT * FROM vaccinationstats")
     output = cursor.fetchall()
     for i in output:
        print(i)
     connection.close()
 
-#********USER INTERACTION FUNCTIONS********
+#*************************USER INTERACTION FUNCTIONS*************************
 
 #~~~~~~~~NORMAL USER~~~~~~~~
 #function to input new user's data into table "user"
@@ -268,6 +342,13 @@ def login():
             connection.close()
             mainMenu()
             return active
+
+#function to logout normal users and admins
+def logout():
+    global active
+    active = ""
+    print("You have been logged out.")
+    startMenu()
 
 #function for users to assess risk
 def userRisk():
@@ -483,6 +564,7 @@ def loginAdmin():
         connection.close()
         mainMenuAdmin()
 
+#>>>>>>>>>>>>>>MANAGEMENT FUNCTIONS>>>>>>>>>>>>>>
 def userManage():
     print("This will be user management")
 
@@ -495,43 +577,57 @@ def vaccineManage():
 def riskManage():
     print("This will be user risk analysis")
 
-def updatesManage():
-    print("This will manage COVID-19 updates")
-
-#function to select which table to export
-def exports():
-    instruct = str(input("What table would you like to export? (user, ppv, covid, vaccination)"))
-    while True:
-        if instruct == "user":
-            dataExportUser()
-            break
-        elif instruct == "ppv":
-            dataExportPPV()
-            break
-        elif instruct == "covid":
-            dataExportCOVID()
-            break
-        elif instruct == "vaccination":
-            dataExportVaccinations()
-            break
-        else:
-            print("Unknown command.")
-
-#!function to export table "user" according to risk (may or may not be needed)
-def exportUserByRisk():
+#function to manage statistics
+def statsManage():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    #Selects everything from table "user"
-    cursor.execute("SELECT columns FROM user ORDER BY risk;")
-    output = cursor.fetchall()
-    for i in output:
-       print(i)
+    while True:
+        instruct = int(input("What statistics would you like to add? (0 for COVID-19, 1 for vaccinations)"))
+        #to add data into table "covidstats"
+        if instruct == 0:
+            date = str(input("Enter date (format: YYYYMMDD): "))
+            cases = int(input("Enter cases: "))
+            recoveries = int(input("Enter recoveries: "))
+            deaths = int(input("Enter deaths: "))
+            active = int(input("Enter active cases: "))
+            cumulative = int(input("Enter cumulative cases: "))
+            tests = int(input("Enter tests done: "))
+
+            command = """INSERT INTO covidstats (date, cases, recoveries, deaths, active, cumulative, tests)
+            VALUES (?,?,?,?,?,?,?)
+            """, (date, cases, recoveries, deaths, active, cumulative, tests)
+            
+            break
+        
+        #to add data into table "vaccinationstats"
+        elif instruct == 1:
+            date = str(input("Enter date (format: YYYYMMDD): "))
+            dose1 = int(input("Enter 1st dose: "))
+            dose2 = int(input("Enter 2nd dose: "))
+            booster = int(input("Enter booser dose: "))
+            totaldose1 = int(input("Enter total 1st dose: "))
+            totaldose2 = int(input("Enter total 2nd dose: "))
+            totalbooster = int(input("Enter total booser dose: "))
+            grandtotal = int(input("Enter cumulative doses: "))
+
+            command = """INSERT INTO vaccinationstats (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
+            VALUES (?,?,?,?,?,?,?,?)
+            """, (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
+            
+            break
+
+        else:
+            print("Invalid")
+
+    cursor.execute(command)
+    connection.commit()
     connection.close()
 
+#>>>>>>>>>>>>>>>DATABASE MANAGEMENT>>>>>>>>>>>>>>>
 #function to add tables
 def newTable():
-    instruct = str(input("What table would you like to add? (user, ppv, covid, vaccination)"))
+    instruct = str(input("What table would you like to add? (user, ppv, covidstats, vaccinationstats)"))
     while True:
         if instruct == "user":
             newTableUser()
@@ -539,42 +635,55 @@ def newTable():
             break
         elif instruct == "ppv":
             newTablePPV()
-            print ("Table 'ppv' with primary key idPPV with attributes name, location, vaccineBrand, patientsPerDay created.")
+            print ("Table 'ppv' with primary key postcode with attributes name, location, vaccineBrand, patientsPerDay created.")
             break
-        elif instruct == "covid":
-            newTableCOVID()
-            print ("Table 'covid' with primary key date with attributes cases, recoveries, deaths, active, cumulative, tests created.")
+        elif instruct == "covidstats":
+            newTableCOVIDStats()
+            print ("Table 'covidstats' with primary key date with attributes cases, recoveries, deaths, active, cumulative, tests created.")
             break
-        elif instruct == "vaccination":
-            newTableVaccinations()
-            print ("Table 'vaccinations' with primary key date with attributes 1dose, 2dose, booster, total1dose, total2dose, totalbooster, grandtotal created.")
+        elif instruct == "vaccinationstats":
+            newTableVaccinationStats()
+            print ("Table 'vaccinationstats' with primary key date with attributes dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal created.")
             break
         else:
             print("Unknown command.")
 
 #function to select which table to add data to
 def addData():
-    instruct = str(input("What table would you like to add data to? (ppv, covid, vaccination)"))
+    instruct = str(input("What table would you like to add data to? (ppv, covidstats, vaccinationstats)"))
     while True:
         if instruct == "ppv":
             addDataPPV()
             break
-        elif instruct == "covid":
-            addDataCOVID()
+        elif instruct == "covidstats":
+            addDataCOVIDStats()
             break
-        elif instruct == "vaccination":
-            addDataVaccinations()
+        elif instruct == "vaccinationstats":
+            addDataVaccinationStats()
             break
         else:
             print("Unknown command.")
 
-def logout():
-    global active
-    active = ""
-    print("You have been logged out.")
-    startMenu()
+#function to select which table to export
+def exports():
+    instruct = str(input("What table would you like to export? (user, ppv, covidstats, vaccinationstats)"))
+    while True:
+        if instruct == "user":
+            dataExportUser()
+            break
+        elif instruct == "ppv":
+            dataExportPPV()
+            break
+        elif instruct == "covidstats":
+            dataExportCOVIDStats()
+            break
+        elif instruct == "vaccinationstats":
+            dataExportVaccinationStats()
+            break
+        else:
+            print("Unknown command.")
 
-#********MENUS FUNCTIONS********
+#*************************MENUS FUNCTIONS*************************
 #function for menu when first running the program
 def startMenu():
     print("\n-------------------------------------------------------------\n")
@@ -664,7 +773,7 @@ def mainMenuAdmin():
             riskManage()
             break
         elif num == 5:
-            updatesManage()
+            statsManage()
             break
         elif num == 6:
             exports()
