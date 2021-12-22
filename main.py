@@ -33,44 +33,38 @@ import math
 #___________________________GLOBAL VARIABLES___________________________
 active = ""
 
-#____________________________PASSWORDS_______________________________
-# 1. username: 010101010101 password: qwertya
-# 2. username: 020202020202 password: qwertyb
-# 3. username: 030303030303 password: qwertyc
-# 4. username: 040404040404 password: qwertyd
-# 5. username: 050505050505 password: qwertye
-# 6. username: 060606060606 password: qwertyf
-# 7. username: 070707070707 password: qwertyg
-# 8. username: 080808080808 password: qwertyh
-# 9. username: 090909090909 password: qwertyi
-# 10. username: 101010101010 password: qwertyj
-# 11. username: 111111111111 password: qwertyk
-# 12. username: 121212121212 password: qwertyl
-# 13. username: 131313131313 password: qwertym
-# 14. username: 141414141414 password: qwertyn
-# 15. username: 151515151515 password: qwertyo
-# 16. username: 161616161616 password: qwertyp
-# 17. username: 171717171717 password: qwertyq
-# 18. username: 181818181818 password: qwertyr
-# 19. username: 191919191919 password: qwertys
-# 20. username: 012345678910 password: qwertyt
+#____________________________USER DETAILS_______________________________
+# 1. username: 010101010101 password: qwertya postcode:41000
+# 2. username: 020202020202 password: qwertyb postcode:41000
+# 3. username: 030303030303 password: qwertyc postcode:41000
+# 4. username: 040404040404 password: qwertyd postcode:41000
+# 5. username: 050505050505 password: qwertye postcode:42000
+# 6. username: 060606060606 password: qwertyf postcode:42000
+# 7. username: 070707070707 password: qwertyg postcode:42000
+# 8. username: 080808080808 password: qwertyh postcode:43000
+# 9. username: 090909090909 password: qwertyi postcode:43000
+# 10. username: 101010101010 password: qwertyj postcode:43000
+# 11. username: 111111111111 password: qwertyk postcode:43000
+# 12. username: 121212121212 password: qwertyl postcode:43000
+# 13. username: 131313131313 password: qwertym postcode:43000
+# 14. username: 141414141414 password: qwertyn postcode:44000
+# 15. username: 151515151515 password: qwertyo postcode:44000
+# 16. username: 161616161616 password: qwertyp postcode:44000
+# 17. username: 171717171717 password: qwertyq postcode:44000
+# 18. username: 181818181818 password: qwertyr postcode:44000
+# 19. username: 191919191919 password: qwertys postcode:45000
+# 20. username: 012345678910 password: qwertyt postcode:45000
 # 21. (ADMIN) username:admin password: admin
 
 #_________________________POSTCODES AND PPV____________________________
 #ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT
-#40000 Shah Alam [Ideal Convention Center (IDCC), Shah Alam]
-#41000 Klang [Hotel Wyndham, Klang]
-#42000 Sungai Long [Sungai Long Specialist Hospital, Sungai Long]
-#43000 Kajang [The MINES Convention Center, Seri Kembangan]
-#44000 Kuala Kubu Baru [Dewan Komuniti Serendah, Serendah]
-#45000 Bukit Jalil [Bukit Jalil Stadium, Bukit Jalil]
-#46000 Petaling Jaya [Dewan Sivik MBPJ, Petaling Jaya]
-#47000 Sungai Buloh [Hospital Sungai Buloh, Sungai Buloh]
-#48000 Putrajaya [PICC Putrajaya, Putrajaya]
-#49000 Cheras [KLCC, Kuala Lumpur]
+#41000 Shah Alam [Ideal Convention Center (IDCC), Shah Alam] (capacity of 1)
+#42000 Sungai Long [Sungai Long Specialist Hospital, Sungai Long] (capacity of 2)
+#43000 Kajang [The MINES Convention Center, Seri Kembangan] (capacity of 3)
+#44000 Kuala Lumpur [Bukit Jalil Stadium, Bukit Jalil] (capacity of 5)
+#45000 Petaling Jaya [Dewan Sivik MBPJ, Petaling Jaya] (capacity of 2)
 
 #___________________________FUNCTIONS_________________________________
-
 #*************************DATABASE FUNCTIONS*************************
 #>>>>>>>>>>>>>CREATING TABLES>>>>>>>>>>>>>
 #function to create a table named  "user", since data is preloaded, no need to call this function
@@ -81,7 +75,7 @@ def newTableUser():
     # cursor
     cursor = connection.cursor()
   
-    # SQL command to create table "user" in the database (assume postcodes only start with 4 i.e. Selangor based)
+    # SQL command to create table "user" in the database
     command = """CREATE TABLE user (
    "ICnum" TEXT NOT NULL,
 	"password" TEXT NOT NULL,
