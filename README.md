@@ -11,14 +11,14 @@ For administrator, login to:
 1. Categorize the public users into high-risk or low-risk based on their medical history. [DONE]
 2. Categorize the public users into priority ranking (1 to 5, with higher the value higher priority) based on their occupations. [DONE] (ask whether my current method is viable)
 3. Create vaccination centers: location and capacity per hour (i.e., how many individuals can be vaccinated in an hour). [DONE]
-4. Set appointment for public users by assigning vaccination center with specific date and time.
+4. Set appointment for public users by assigning vaccination center with specific date and time. [DONE]
 5. Sort the public users according to their postcode, age, Covid-19 status, priority, group, etc. [DONE]
-6. Generate the list of assigned appointments for a vaccination center and sorted by date and time, containing users’ name, ID, RSVP, phone and risk group.
+6. Generate the list of assigned appointments for a vaccination center and sorted by date and time, containing users’ name, ID, RSVP, phone and risk group. [DONE]
 
 Some advance features (but not limited to the list below):
 1. To auto-categorize the public users into high-risk and low-risk group based on medical history (and skip no. 1 (admin)) and/or priority ranking based on occupation (and skip no. 2 (admin)). [DONE]
-2. Auto-assigned appointment when new vaccination slot/date/center is made available by the administrator.
-3. To check if a vaccination center has empty slots (certain date and time has not reached the maximum capacity) and/or over-booking (number of appointments are more than the capacity) and notify the administrators.
+2. Auto-assigned appointment when new vaccination slot/date/center is made available by the administrator. [N/A]
+3. To check if a vaccination center has empty slots (certain date and time has not reached the maximum capacity) and/or over-booking (number of appointments are more than the capacity) and notify the administrators. [N/A]
 4. To store all available data in persistent storage file (or text file). [DONE]
 5. Graphical user interface. [N/A]
 Extra: 1. Hashing passwords. [DONE]
