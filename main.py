@@ -57,7 +57,8 @@ active = ""
 # 21. (ADMIN) username:admin password: admin
 
 #_________________________POSTCODES AND PPV____________________________
-#ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT, 
+#ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT
+#ASSUME 1 POSTCODES ONLY HAS 1 PPV, SO POSTCODE IS PRIMARY KEY
 #41000 Shah Alam [Ideal Convention Center (IDCC), Shah Alam] (capacity of 1)
 #42000 Sungai Long [Sungai Long Specialist Hospital, Sungai Long] (capacity of 2)
 #43000 Kajang [The MINES Convention Center, Seri Kembangan] (capacity of 3)
@@ -110,6 +111,28 @@ def newTablePPV():
     "vaccineBrand" TEXT NOT NULL,
     "patientsPerDay" INTEGER NOT NULL,
     PRIMARY KEY("postcode")
+    );"""
+
+    cursor.execute(command)
+    connection.commit()
+    connection.close()
+    PPVManage()
+
+#function to create a table named  "vaccinations", since data is preloaded, no need to call this function (datetime format: YYYYMMDDHHMM)
+def newTableVaccinations():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+  
+    command = """CREATE TABLE vaccinations(
+    "id" INTEGER NOT NULL AUTOINCREMENT,
+    "datetime" TEXT NOT NULL,
+    "ICnum" TEXT NOT NULL,
+    "postcode" INTEGER NOT NULL,
+    "notify" INTEGER NOT NULL,
+    "confirmation" INTEGER NOT NULL,
+    PRIMARY KEY("id"),
+    FOREIGN KEY(ICnum) REFERENCES user(ICnum)
+    FOREIGN KEY(postcode) REFERENCES ppv(postcode)
     );"""
 
     cursor.execute(command)
@@ -225,6 +248,40 @@ def addDataVaccinationStats():
     print("Vaccination statistics added, redirecting back to main menu shortly.")
     mainMenuAdmin()
 
+#>>>>>>>>>>>>>UPDATING DATA>>>>>>>>>>>>>
+def updateDataPPV():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    postcode = int(input("Which postcode do you want to update the PPV?: "))
+    name = str(input("New name: "))
+    location = str(input("New location: "))
+    vaccineBrand = str(input("New Vaccine Brand: "))
+    patientsPerDay = int(input("New Patients Per Day: "))
+  
+    statement = f"UPDATE user SET name='{name}', SET location='{location}', SET vaccineBrand='{vaccineBrand}', SET patientsPerDay='{patientsPerDay}', WHERE postcode = '{postcode}';"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("Information updated, redirecting to PPV management shortly.")
+    PPVManage()
+
+#>>>>>>>>>>>>>DATA DELETION>>>>>>>>>>>>>
+def deleteDataPPV():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    postcode = int(input("Please enter the post code of the PPV to be deleted: "))
+  
+    statement = f"DELETE FROM ppv WHERE postcode='{postcode};"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("PPV deleted, redirecting to PPV management shortly.")
+    PPVManage()
+
 #>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
 #function to choose what should it be sorted by
 def dataExportUser():
@@ -313,7 +370,7 @@ def dataExportPPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    #Selects everything from table "user"
+    #Selects everything from table "ppv"
     cursor.execute("SELECT * FROM ppv")
     output = cursor.fetchall()
     for i in output:
@@ -339,6 +396,18 @@ def dataExportVaccinationStats():
 
     #Selects everything from table "vaccinationstats"
     cursor.execute("SELECT * FROM vaccinationstats")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
+#function to export all data in table "vaccinations" according to datetime
+def dataExportVaccinations():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "vaccinations" and sorts datetime by ascending order
+    cursor.execute("SELECT columns FROM vaccinations ORDER BY datetime;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -426,7 +495,7 @@ def userRisk():
         elif overseas == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
     
     while True:
         CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
@@ -436,7 +505,7 @@ def userRisk():
         elif CContact == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         age = str(input("Are you above 60 years old?\n"))
@@ -446,7 +515,7 @@ def userRisk():
         elif age == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         diabetes = str(input("Are you diabetic?\n"))
@@ -456,7 +525,7 @@ def userRisk():
         elif diabetes == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
     
     while True:
         hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
@@ -466,7 +535,7 @@ def userRisk():
         elif hypertension == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         immuneCompromised = str(input("Are you Immunocompromised?\n"))
@@ -476,7 +545,7 @@ def userRisk():
         elif immuneCompromised == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         obese = str(input("Are you obese? (BMI>35)\n"))
@@ -486,7 +555,7 @@ def userRisk():
         elif obese == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
@@ -496,7 +565,7 @@ def userRisk():
         elif disease == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
@@ -506,7 +575,7 @@ def userRisk():
         elif substance == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     while True:
         pregnant = str(input("Are you pregnant?\n"))
@@ -516,7 +585,7 @@ def userRisk():
         elif pregnant == "N":
             break
         else:
-            print("Invalid\n")
+            print("Invalid input.\n")
 
     
     print("Please state your occupation.")
@@ -636,21 +705,97 @@ def loginAdmin():
         mainMenuAdmin()
 
 #>>>>>>>>>>>>>>MANAGEMENT FUNCTIONS>>>>>>>>>>>>>>
-#todo!
 def userManage():
-    print("This will be user management")
+    print("----------------------------USER MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to create table user.")
+    print("Type 2 to view all users.")
+    print("Type 3 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            newTableUser()
+            print("Table 'user' with primary key 'ICnum' with attributes 'password', 'name', 'age', 'phone', 'address', 'postcode', 'gender', 'risk', 'status', 'userStatus' created.")
+            break
+        elif num == 2:
+            dataExportUser()
+            userManage()
+            break
+        elif num == 3:
+            mainMenuAdmin()
+            break
+        else:
+            print("Invalid input.")
 
 def PPVManage():
-    print("This will be PPV management")
+    print("----------------------------PPV MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to create table PPV.")
+    print("Type 2 to view all avaliable PPVs.")
+    print("Type 3 to add a PPV.")
+    print("Type 4 to update a PPV's details.")
+    print("Type 5 to remove a PPV.")
+    print("Type 6 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            newTablePPV()
+            print ("Table 'ppv' with primary key 'postcode' with attributes 'name', 'location', 'vaccineBrand', 'patientsPerDay' created.")
+            break
+        elif num == 2:
+            dataExportPPV()
+            PPVManage()
+            break
+        elif num == 3:
+            addDataPPV()
+            break
+        elif num == 4:
+            updateDataPPV()
+            break
+        elif num == 5:
+            deleteDataPPV()
+            break
+        elif num == 6:
+            mainMenuAdmin()
+            break
+        else:
+            print("Invalid input.")
 
 def vaccineManage():
     print("This will be vaccination management")
-
-def riskManage():
-    print("This will be user risk analysis")
 #todo!
 
-#function to manage statistics
+def statsManage():
+    print("----------------------------PPV MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to add COVID-19 statistics.")
+    print("Type 2 to add vaccination statistics.")
+    print("Type 3 to export COVID-19 statistics.")
+    print("Type 4 to export vaccination statistics.")
+    print("Type 5 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            dataExportPPV()
+        elif num == 2:
+            deleteDataPPV()
+            break
+        elif num == 3:
+            updateDataPPV()
+            break
+        elif num == 4:
+            addDataPPV()
+            break
+        elif num == 5:
+            logout()
+            break
+        else:
+            print("Invalid input.")
+
+#!function to manage statistics
 def statsManage():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -691,7 +836,7 @@ def statsManage():
             break
 
         else:
-            print("Invalid")
+            print("Invalid input.")
 
     cursor.execute(command)
     connection.commit()
@@ -721,12 +866,44 @@ def newTable():
         else:
             print("Unknown command.")
 
-#function to select which table to add data to
+#function to select which table to add data
 def addData():
     instruct = str(input("What table would you like to add data to? (ppv, covidstats, vaccinationstats)"))
     while True:
         if instruct == "ppv":
             addDataPPV()
+            break
+        elif instruct == "covidstats":
+            addDataCOVIDStats()
+            break
+        elif instruct == "vaccinationstats":
+            addDataVaccinationStats()
+            break
+        else:
+            print("Unknown command.")
+
+#!function to select which table to update data
+def updateData():
+    instruct = str(input("What table would you like to update data? (ppv, covidstats, vaccinationstats)"))
+    while True:
+        if instruct == "ppv":
+            updateDataPPV()
+            break
+        elif instruct == "covidstats":
+            addDataCOVIDStats()
+            break
+        elif instruct == "vaccinationstats":
+            addDataVaccinationStats()
+            break
+        else:
+            print("Unknown command.")
+
+#!function to select which table to delete data
+def updateData():
+    instruct = str(input("What table would you like to delete data? (ppv, covidstats, vaccinationstats)"))
+    while True:
+        if instruct == "ppv":
+            updateDataPPV()
             break
         elif instruct == "covidstats":
             addDataCOVIDStats()
@@ -777,7 +954,7 @@ def startMenu():
             loginAdmin()
             break
         else:
-            print("invalid")
+            print("Invalid input.")
 
 #function for menu when user successfully login
 def mainMenu():
@@ -817,7 +994,7 @@ def mainMenu():
             logout()
             break
         else:
-            print("invalid")
+            print("Invalid input.")
     connection.close()
 
 #function for menu when admin logged in
@@ -827,10 +1004,8 @@ def mainMenuAdmin():
     print("Type 1 for user management.")
     print("Type 2 for PPV management.")
     print("Type 3 for vaccination management.")
-    print("Type 4 for user risk management.")
-    print("Type 5 for COVID-19 updates management.")
-    print("Type 6 for data exports.")
-    print("Type 7 to logout.")
+    print("Type 4 for COVID-19 updates management.")
+    print("Type 5 to logout.")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -844,19 +1019,13 @@ def mainMenuAdmin():
             vaccineManage()
             break
         elif num == 4:
-            riskManage()
-            break
-        elif num == 5:
             statsManage()
-            break
-        elif num == 6:
-            exports()
-            break
-        elif num == 7:
+            break        
+        elif num == 5:
             logout()
             break
         else:
-            print("invalid")
+            print("Invalid input.")
 
 #*****MAIN FUNCTION******(needed not needed ¯\_(ツ)_/¯)
 def main():
