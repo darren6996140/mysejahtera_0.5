@@ -547,7 +547,7 @@ def userRisk():
     print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#!function for users to update status (UNTESTED)
+#function for users to update status
 def status():
     global active
     status = 0
@@ -636,6 +636,7 @@ def loginAdmin():
         mainMenuAdmin()
 
 #>>>>>>>>>>>>>>MANAGEMENT FUNCTIONS>>>>>>>>>>>>>>
+#todo!
 def userManage():
     print("This will be user management")
 
@@ -647,6 +648,7 @@ def vaccineManage():
 
 def riskManage():
     print("This will be user risk analysis")
+#todo!
 
 #function to manage statistics
 def statsManage():
