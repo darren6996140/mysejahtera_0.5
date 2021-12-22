@@ -267,6 +267,12 @@ def updateDataPPV():
     print("Information updated, redirecting to PPV management shortly.")
     PPVManage()
 
+def updateDataCOVIDStats():
+    print("todo")
+
+def updateDataVaccinationStats():
+    print("todo")
+
 #>>>>>>>>>>>>>DATA DELETION>>>>>>>>>>>>>
 def deleteDataPPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -281,6 +287,12 @@ def deleteDataPPV():
     connection.close()
     print("PPV deleted, redirecting to PPV management shortly.")
     PPVManage()
+
+def deleteDataCOVIDStats():
+    print("todo")
+
+def deleteDataVaccinationStats():
+    print("todo")
 
 #>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
 #function to choose what should it be sorted by
@@ -768,29 +780,89 @@ def vaccineManage():
 #todo!
 
 def statsManage():
-    print("----------------------------PPV MANAGEMENT----------------------------\n")
+    print("----------------------------STATISTICS MANAGEMENT----------------------------\n")
     print("What would you like to do?")
-    print("Type 1 to add COVID-19 statistics.")
-    print("Type 2 to add vaccination statistics.")
-    print("Type 3 to export COVID-19 statistics.")
-    print("Type 4 to export vaccination statistics.")
-    print("Type 5 to return to main menu.")
+    print("Type 1 for COVID-19 statistics.")
+    print("Type 2 for vaccination statistics.")
+    print("Type 3 to return to main menu.")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
         if num == 1:
-            dataExportPPV()
+            covidStatsManage()
         elif num == 2:
-            deleteDataPPV()
+            vaccinationStatsManage()
             break
         elif num == 3:
-            updateDataPPV()
+            mainMenuAdmin()
+            break
+        else:
+            print("Invalid input.")
+
+def covidStatsManage():
+    print("----------------------------COVID STATS MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to create COVID-19 statistics table.")
+    print("Type 2 to view COVID-19 statistics.")
+    print("Type 3 to add COVID-19 statistics.")
+    print("Type 4 to update COVID-19 statistics.")
+    print("Type 5 to remove COVID-19 statistics.")
+    print("Type 6 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            newTableCOVIDStats()
+            print ("Table 'covidstats' with primary key 'date' with attributes 'cases', 'recoveries', 'deaths', 'active', 'cumulative', 'tests' created.")
+        elif num == 2:
+            dataExportCOVIDStats()
+            covidStatsManage()
+            break
+        elif num == 3:
+            addDataCOVIDStats()
             break
         elif num == 4:
-            addDataPPV()
+            updateDataCOVIDStats()
             break
         elif num == 5:
-            logout()
+            deleteDataCOVIDStats()
+            break
+        elif num == 6:
+            mainMenuAdmin()
+            break
+        else:
+            print("Invalid input.")
+
+def vaccinationStatsManage():
+    print("----------------------------VACCINATION STATS MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to create vaccination statistics table.")
+    print("Type 2 to view vaccination statistics.")
+    print("Type 3 to add vaccination statistics.")
+    print("Type 4 to update vaccination statistics.")
+    print("Type 5 to remove vaccination statistics.")
+    print("Type 6 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            newTableVaccinationStats()
+            print ("Table 'vaccinationstats' with primary key date with attributes 'dose1', 'dose2', 'booster', 'totaldose1', 'totaldose2', 'totalbooster', 'grandtotal' created.")
+        elif num == 2:
+            dataExportVaccinationStats()
+            vaccinationStatsManage()
+            break
+        elif num == 3:
+            addDataVaccinationStats()
+            break
+        elif num == 4:
+            updateDataVaccinationStats()
+            break
+        elif num == 5:
+            deleteDataVaccinationStats()
+            break
+        elif num == 6:
+            mainMenuAdmin()
             break
         else:
             print("Invalid input.")
@@ -842,7 +914,7 @@ def statsManage():
     connection.commit()
     connection.close()
 
-#>>>>>>>>>>>>>>>DATABASE MANAGEMENT>>>>>>>>>>>>>>>
+#>>>>>>>>>>>>>>>DATABASE MANAGEMENT [REDUNDANT]>>>>>>>>>>>>>>>
 #function to add tables
 def newTable():
     instruct = str(input("What table would you like to add? (user, ppv, covidstats, vaccinationstats)"))
@@ -1004,7 +1076,7 @@ def mainMenuAdmin():
     print("Type 1 for user management.")
     print("Type 2 for PPV management.")
     print("Type 3 for vaccination management.")
-    print("Type 4 for COVID-19 updates management.")
+    print("Type 4 for COVID-19 statistics management.")
     print("Type 5 to logout.")
     while True:
         num = int(input("Enter a number: "))
