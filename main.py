@@ -119,6 +119,7 @@ def newTablePPV():
     PPVManage()
 
 #function to create a table named  "vaccinations", since data is preloaded, no need to call this function (datetime format: YYYYMMDDHHMM)
+#!needs much work (vaccination status[link to table user], etc.)
 def newTableVaccinations():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -210,19 +211,20 @@ def addDataCOVIDStats():
     date = str(input("Date: "))
     cases = int(input("Cases: "))
     recoveries = int(input("Recoveries: "))
+    deaths = int(input("Deaths: "))
     active = int(input("Active Cases: "))
     cumulative  = int(input("Cumulative Cases: "))
     tests  = int(input("Tests Done: "))
 
     cursor.execute("""
-    INSERT INTO user (date, cases, recoveries, active, cumulative, tests)
+    INSERT INTO user (date, cases, recoveries, deaths, active, cumulative, tests)
     VALUES (?,?,?,?,?,?)
-    """, (date, cases, recoveries, active, cumulative, tests))
+    """, (date, cases, recoveries, deaths, active, cumulative, tests))
 
     connection.commit()
     connection.close()
-    print("COVID-19 statistics added, redirecting back to main menu shortly.")
-    mainMenuAdmin()
+    print("COVID-19 statistics added, redirecting back to COVID-19 stats management shortly.")
+    covidStatsManage()
 
 #function to add data into table "vaccinationstats"
 def addDataVaccinationStats():
@@ -245,8 +247,8 @@ def addDataVaccinationStats():
 
     connection.commit()
     connection.close()
-    print("Vaccination statistics added, redirecting back to main menu shortly.")
-    mainMenuAdmin()
+    print("Vaccination statistics added, redirecting back to vaccination stats management shortly.")
+    vaccinationStatsManage()
 
 #>>>>>>>>>>>>>UPDATING DATA>>>>>>>>>>>>>
 def updateDataPPV():
@@ -259,7 +261,7 @@ def updateDataPPV():
     vaccineBrand = str(input("New Vaccine Brand: "))
     patientsPerDay = int(input("New Patients Per Day: "))
   
-    statement = f"UPDATE user SET name='{name}', SET location='{location}', SET vaccineBrand='{vaccineBrand}', SET patientsPerDay='{patientsPerDay}', WHERE postcode = '{postcode}';"
+    statement = f"UPDATE user SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -268,10 +270,45 @@ def updateDataPPV():
     PPVManage()
 
 def updateDataCOVIDStats():
-    print("todo")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Which date do you want to update the statistics?: "))
+    cases = int(input("New cases: "))
+    recoveries = int(input("New recoveries: "))
+    deaths = int(input("New deaths: "))
+    active = int(input("New active cases: "))
+    cumulative  = int(input("New cumulative cases: "))
+    tests  = int(input("New tests done: "))
+  
+    statement = f"UPDATE user SET cases='{cases}', recoveries='{recoveries}', deaths='{deaths}', active='{active}', cumulative='{cumulative}', tests='{tests}' WHERE date = '{date}';"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("Information updated, redirecting to COVID-19 stats management shortly.")
+    covidStatsManage()
 
 def updateDataVaccinationStats():
-    print("todo")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Which date do you want to update the statistics?: "))
+    dose1 = int(input("New dose 1: "))
+    dose2 = int(input("New dose 2: "))
+    booster = int(input("New booster doses: "))
+    totaldose1  = int(input("New total dose 1: "))
+    totaldose2  = int(input("New total dose 2: "))
+    totalbooster  = int(input("New total booster doses: "))
+    grandtotal  = int(input("New cumulative administered: "))
+  
+    statement = f"UPDATE user SET dose1='{dose1}', dose2='{dose2}', booster='{booster}', totaldose1='{totaldose1}', totaldose2='{totaldose2}', totalbooster='{totalbooster}', grandtotal='{grandtotal}' WHERE date = '{date}';"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("Information updated, redirecting to vaccination stats management shortly.")
+    vaccinationStatsManage()
 
 #>>>>>>>>>>>>>DATA DELETION>>>>>>>>>>>>>
 def deleteDataPPV():
@@ -289,10 +326,32 @@ def deleteDataPPV():
     PPVManage()
 
 def deleteDataCOVIDStats():
-    print("todo")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Please enter the date of the statistics to be deleted: "))
+  
+    statement = f"DELETE FROM covidstats WHERE date='{date};"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("Statistics deleted, redirecting to COVID-19 stats management shortly.")
+    covidStatsManage()
 
 def deleteDataVaccinationStats():
-    print("todo")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Please enter the date of the statistics to be deleted: "))
+  
+    statement = f"DELETE FROM covidstats WHERE date='{date};"
+    cursor.execute(statement)
+
+    connection.commit()
+    connection.close()
+    print("Statistics deleted, redirecting to vaccination stats management shortly.")
+    vaccinationStatsManage()
 
 #>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
 #function to choose what should it be sorted by
@@ -389,6 +448,18 @@ def dataExportPPV():
        print(i)
     connection.close()
 
+#function to export all data in table "vaccinations" according to datetime
+def dataExportVaccinations():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "vaccinations" and sorts datetime by ascending order
+    cursor.execute("SELECT columns FROM vaccinations ORDER BY datetime;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+
 #function to export all data in table "covidstats"
 def dataExportCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -408,18 +479,6 @@ def dataExportVaccinationStats():
 
     #Selects everything from table "vaccinationstats"
     cursor.execute("SELECT * FROM vaccinationstats")
-    output = cursor.fetchall()
-    for i in output:
-       print(i)
-    connection.close()
-
-#function to export all data in table "vaccinations" according to datetime
-def dataExportVaccinations():
-    connection = sqlite3.connect("mysejahtera_0.5.db")
-    cursor = connection.cursor()
-
-    #Selects everything from table "vaccinations" and sorts datetime by ascending order
-    cursor.execute("SELECT columns FROM vaccinations ORDER BY datetime;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -716,12 +775,13 @@ def loginAdmin():
         connection.close()
         mainMenuAdmin()
 
-#>>>>>>>>>>>>>>MANAGEMENT FUNCTIONS>>>>>>>>>>>>>>
+#>>>>>>>>>>>>>>DATABASE MANAGEMENT FUNCTIONS>>>>>>>>>>>>>>
+#function to manage user data
 def userManage():
     print("----------------------------USER MANAGEMENT----------------------------\n")
     print("What would you like to do?")
     print("Type 1 to create table user.")
-    print("Type 2 to view all users.")
+    print("Type 2 to view all user data.")
     print("Type 3 to return to main menu.")
     while True:
         num = int(input("Enter a number: "))
@@ -740,11 +800,12 @@ def userManage():
         else:
             print("Invalid input.")
 
+#function to manage PPV data
 def PPVManage():
     print("----------------------------PPV MANAGEMENT----------------------------\n")
     print("What would you like to do?")
     print("Type 1 to create table PPV.")
-    print("Type 2 to view all avaliable PPVs.")
+    print("Type 2 to view all PPV data.")
     print("Type 3 to add a PPV.")
     print("Type 4 to update a PPV's details.")
     print("Type 5 to remove a PPV.")
@@ -775,10 +836,12 @@ def PPVManage():
         else:
             print("Invalid input.")
 
+#function to manage vaccination data
 def vaccineManage():
     print("This will be vaccination management")
 #todo!
 
+#function to choose what stats to manage
 def statsManage():
     print("----------------------------STATISTICS MANAGEMENT----------------------------\n")
     print("What would you like to do?")
@@ -799,6 +862,7 @@ def statsManage():
         else:
             print("Invalid input.")
 
+#function to manage COVID-19 stats
 def covidStatsManage():
     print("----------------------------COVID STATS MANAGEMENT----------------------------\n")
     print("What would you like to do?")
@@ -833,6 +897,7 @@ def covidStatsManage():
         else:
             print("Invalid input.")
 
+#function to manage vaccination stats
 def vaccinationStatsManage():
     print("----------------------------VACCINATION STATS MANAGEMENT----------------------------\n")
     print("What would you like to do?")
@@ -866,144 +931,6 @@ def vaccinationStatsManage():
             break
         else:
             print("Invalid input.")
-
-#!function to manage statistics
-def statsManage():
-    connection = sqlite3.connect("mysejahtera_0.5.db")
-    cursor = connection.cursor()
-
-    while True:
-        instruct = int(input("What statistics would you like to add? (0 for COVID-19, 1 for vaccinations)"))
-        #to add data into table "covidstats"
-        if instruct == 0:
-            date = str(input("Enter date (format: YYYYMMDD): "))
-            cases = int(input("Enter cases: "))
-            recoveries = int(input("Enter recoveries: "))
-            deaths = int(input("Enter deaths: "))
-            active = int(input("Enter active cases: "))
-            cumulative = int(input("Enter cumulative cases: "))
-            tests = int(input("Enter tests done: "))
-
-            command = """INSERT INTO covidstats (date, cases, recoveries, deaths, active, cumulative, tests)
-            VALUES (?,?,?,?,?,?,?)
-            """, (date, cases, recoveries, deaths, active, cumulative, tests)
-            
-            break
-        
-        #to add data into table "vaccinationstats"
-        elif instruct == 1:
-            date = str(input("Enter date (format: YYYYMMDD): "))
-            dose1 = int(input("Enter 1st dose: "))
-            dose2 = int(input("Enter 2nd dose: "))
-            booster = int(input("Enter booser dose: "))
-            totaldose1 = int(input("Enter total 1st dose: "))
-            totaldose2 = int(input("Enter total 2nd dose: "))
-            totalbooster = int(input("Enter total booser dose: "))
-            grandtotal = int(input("Enter cumulative doses: "))
-
-            command = """INSERT INTO vaccinationstats (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
-            VALUES (?,?,?,?,?,?,?,?)
-            """, (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
-            
-            break
-
-        else:
-            print("Invalid input.")
-
-    cursor.execute(command)
-    connection.commit()
-    connection.close()
-
-#>>>>>>>>>>>>>>>DATABASE MANAGEMENT [REDUNDANT]>>>>>>>>>>>>>>>
-#function to add tables
-def newTable():
-    instruct = str(input("What table would you like to add? (user, ppv, covidstats, vaccinationstats)"))
-    while True:
-        if instruct == "user":
-            newTableUser()
-            print ("Table 'user' with primary key ICnum with attributes ICnum, password, name, age, phone, address, postcode, gender, risk, status, userStatus created.")
-            break
-        elif instruct == "ppv":
-            newTablePPV()
-            print ("Table 'ppv' with primary key postcode with attributes name, location, vaccineBrand, patientsPerDay created.")
-            break
-        elif instruct == "covidstats":
-            newTableCOVIDStats()
-            print ("Table 'covidstats' with primary key date with attributes cases, recoveries, deaths, active, cumulative, tests created.")
-            break
-        elif instruct == "vaccinationstats":
-            newTableVaccinationStats()
-            print ("Table 'vaccinationstats' with primary key date with attributes dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal created.")
-            break
-        else:
-            print("Unknown command.")
-
-#function to select which table to add data
-def addData():
-    instruct = str(input("What table would you like to add data to? (ppv, covidstats, vaccinationstats)"))
-    while True:
-        if instruct == "ppv":
-            addDataPPV()
-            break
-        elif instruct == "covidstats":
-            addDataCOVIDStats()
-            break
-        elif instruct == "vaccinationstats":
-            addDataVaccinationStats()
-            break
-        else:
-            print("Unknown command.")
-
-#!function to select which table to update data
-def updateData():
-    instruct = str(input("What table would you like to update data? (ppv, covidstats, vaccinationstats)"))
-    while True:
-        if instruct == "ppv":
-            updateDataPPV()
-            break
-        elif instruct == "covidstats":
-            addDataCOVIDStats()
-            break
-        elif instruct == "vaccinationstats":
-            addDataVaccinationStats()
-            break
-        else:
-            print("Unknown command.")
-
-#!function to select which table to delete data
-def updateData():
-    instruct = str(input("What table would you like to delete data? (ppv, covidstats, vaccinationstats)"))
-    while True:
-        if instruct == "ppv":
-            updateDataPPV()
-            break
-        elif instruct == "covidstats":
-            addDataCOVIDStats()
-            break
-        elif instruct == "vaccinationstats":
-            addDataVaccinationStats()
-            break
-        else:
-            print("Unknown command.")
-
-#function to select which table to export
-def exports():
-    instruct = str(input("What table would you like to export? (user, ppv, covidstats, vaccinationstats)"))
-    while True:
-        if instruct == "user":
-            dataExportUser()
-            break
-        elif instruct == "ppv":
-            dataExportPPV()
-            break
-        elif instruct == "covidstats":
-            dataExportCOVIDStats()
-            break
-        elif instruct == "vaccinationstats":
-            dataExportVaccinationStats()
-            break
-        else:
-            print("Unknown command.")
 
 #*************************MENUS FUNCTIONS*************************
 #function for menu when first running the program
