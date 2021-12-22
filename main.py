@@ -56,6 +56,19 @@ active = ""
 # 20. username: 012345678910 password: qwertyt
 # 21. (ADMIN) username:admin password: admin
 
+#_________________________POSTCODES AND PPV____________________________
+#ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT
+#40000 Shah Alam [Ideal Convention Center (IDCC), Shah Alam]
+#41000 Klang [Hotel Wyndham, Klang]
+#42000 Sungai Long [Sungai Long Specialist Hospital, Sungai Long]
+#43000 Kajang [The MINES Convention Center, Seri Kembangan]
+#44000 Kuala Kubu Baru [Dewan Komuniti Serendah, Serendah]
+#45000 Bukit Jalil [Bukit Jalil Stadium, Bukit Jalil]
+#46000 Petaling Jaya [Dewan Sivik MBPJ, Petaling Jaya]
+#47000 Sungai Buloh [Hospital Sungai Buloh, Sungai Buloh]
+#48000 Putrajaya [PICC Putrajaya, Putrajaya]
+#49000 Cheras [KLCC, Kuala Lumpur]
+
 #___________________________FUNCTIONS_________________________________
 
 #*************************DATABASE FUNCTIONS*************************
@@ -304,7 +317,7 @@ def signup():
     age = int(input("Age: "))
     phone = str(input("Phone number (without dash): "))
     address = str(input("Address: "))
-    postcode = str(input("Postcode: "))
+    postcode = int(input("Postcode: "))
     gender = int(input("Gender (0 for male, 1 for female): "))
   
     #Insert values above entered from user
@@ -459,8 +472,7 @@ def userRisk():
         else:
             print("Invalid\n")
 
-    print(risk)
-    '''
+    
     print("Please state your occupation.")
     print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.")
     
@@ -488,7 +500,6 @@ def userRisk():
     #redirect back to main menu
     print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
     mainMenu()
-    '''
 
 #!function for users to update status (UNTESTED)
 def status():
@@ -537,14 +548,28 @@ def status():
     print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
     mainMenu()
 
+#!heavy shet kena tunggu
 def vaccine():
     print("This will be vaccination")
 
-def updates():
-    print("This will be COVID-19 updates")
-
+#function to let users to update personal info
 def personalInfo():
-    print("This will be user's personal info")
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    print("\nPlease enter the following details: \n")
+    name = str(input("Full Name: "))
+    age = int(input("Age: "))
+    phone = str(input("Phone number (without dash): "))
+    address = str(input("Address: "))
+    postcode = int(input("Postcode: "))
+    gender = int(input("Gender (0 for male, 1 for female): "))
+  
+    cursor.execute("""UPDATE user 
+    SET name='{name}', age='{age}', phone='{phone}', address='{address}', postcode='{postcode}', gender='{gender}' WHERE ICnum = '{active}';
+    """, (name, age, phone, address, postcode, gender))
+
+    connection.commit()
+    connection.close()
             
 #~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
@@ -734,7 +759,8 @@ def mainMenu():
             userRisk()
             break
         elif num == 3:
-            updates()
+            print("\nThis is the list of COVID-19 statistics starting from 1st January 2022\n")
+            dataExportCOVIDStats()
             break
         elif num == 4:
             personalInfo()
