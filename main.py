@@ -278,46 +278,108 @@ def userRisk():
     print("Your risk will be displayed in a number from 1-5.")
     print("Please answer the following questions truthfully by answering either 'Y' for yes or 'N' for no.\n")
 
-    overseas = str(input("Have you been outside of the country in the past 14 days?\n"))
-    if overseas == "Y":
-        risk = risk + 0.6
+    while True:
+        overseas = str(input("Have you been outside of the country in the past 14 days?\n"))
+        if overseas == "Y":
+            risk = risk + 0.6
+            break
+        elif overseas == "N":
+            break
+        else:
+            print("Invalid\n")
     
-    CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
-    if CContact == "Y":
-        risk = risk + 0.6
+    while True:
+        CContact = str(input("Have you been in close contact with any COVID-19 patient in the past 14 days?\n"))
+        if CContact == "Y":
+            risk = risk + 0.6
+            break
+        elif CContact == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    age = str(input("Are you above 60 years old?\n"))
-    if age == "Y":
-        risk = risk + 0.5
+    while True:
+        age = str(input("Are you above 60 years old?\n"))
+        if age == "Y":
+            risk = risk + 0.5
+            break
+        elif age == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    diabetes = str(input("Are you diabetic?\n"))
-    if diabetes == "Y":
-        risk = risk + 0.7
+    while True:
+        diabetes = str(input("Are you diabetic?\n"))
+        if diabetes == "Y":
+            risk = risk + 0.7
+            break
+        elif diabetes == "N":
+            break
+        else:
+            print("Invalid\n")
     
-    hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
-    if hypertension == "Y":
-        risk = risk + 0.6
+    while True:
+        hypertension = str(input("Are you diagnosed with high blood pressure or any heart condition?\n"))
+        if hypertension == "Y":
+            risk = risk + 0.6
+            break
+        elif hypertension == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    immuneCompromised = str(input("Are you Immunocompromised?\n"))
-    if immuneCompromised == "Y":
-        risk = risk + 0.5
+    while True:
+        immuneCompromised = str(input("Are you Immunocompromised?\n"))
+        if immuneCompromised == "Y":
+            risk = risk + 0.5
+            break
+        elif immuneCompromised == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    obese = str(input("Are you obese? (BMI>35)\n"))
-    if obese == "Y":
-        risk = risk + 0.6
-    
-    disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
-    if disease == "Y":
-        risk = risk + 0.5
+    while True:
+        obese = str(input("Are you obese? (BMI>35)\n"))
+        if obese == "Y":
+            risk = risk + 0.6
+            break
+        elif obese == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
-    if substance == "Y":
-        risk = risk + 0.4
+    while True:
+        disease = str(input("Are you diagnosed with any other long term disease such as cancer, high cholesterol, stroke, chronic diseases, etc.?\n"))
+        if disease == "Y":
+            risk = risk + 0.5
+            break
+        elif disease == "N":
+            break
+        else:
+            print("Invalid\n")
 
-    pregnant = str(input("Are you pregnant?\n"))
-    if pregnant == "Y":
-        risk = risk + 0.4
+    while True:
+        substance = str(input("Do you take unhealthy substances such as drugs, tobacco products, alcohol, etc.?\n"))
+        if substance == "Y":
+            risk = risk + 0.4
+            break
+        elif substance == "N":
+            break
+        else:
+            print("Invalid\n")
 
+    while True:
+        pregnant = str(input("Are you pregnant?\n"))
+        if pregnant == "Y":
+            risk = risk + 0.4
+            break
+        elif pregnant == "N":
+            break
+        else:
+            print("Invalid\n")
+
+    print(risk)
+    '''
     print("Please state your occupation.")
     print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.")
     
@@ -333,7 +395,7 @@ def userRisk():
     #rounds down the risk to an integer
     risk = math.floor(risk)
     print("Your updated risk is", risk)
-
+    
     #updates the risk of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -345,6 +407,7 @@ def userRisk():
     #redirect back to main menu
     print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
     mainMenu()
+    '''
 
 #!function for users to update status (UNTESTED)
 def status():
@@ -505,6 +568,12 @@ def addData():
         else:
             print("Unknown command.")
 
+def logout():
+    global active
+    active = ""
+    print("You have been logged out.")
+    startMenu()
+
 #********MENUS FUNCTIONS********
 #function for menu when first running the program
 def startMenu():
@@ -545,6 +614,7 @@ def mainMenu():
     print("Type 2 for risk assesment.")
     print("Type 3 for current COVID-19 updates.")
     print("Type 4 for updating personal information.\n")
+    print("Type 5 to log out.\n")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -560,6 +630,9 @@ def mainMenu():
         elif num == 4:
             personalInfo()
             break
+        elif num == 5:
+            logout()
+            break
         else:
             print("invalid")
     connection.close()
@@ -574,6 +647,7 @@ def mainMenuAdmin():
     print("Type 4 for user risk management.")
     print("Type 5 for COVID-19 updates management.")
     print("Type 6 for data exports.")
+    print("Type 7 to logout.")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -594,6 +668,9 @@ def mainMenuAdmin():
             break
         elif num == 6:
             exports()
+            break
+        elif num == 7:
+            logout()
             break
         else:
             print("invalid")
