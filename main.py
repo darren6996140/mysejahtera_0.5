@@ -57,7 +57,7 @@ active = ""
 # 21. (ADMIN) username:admin password: admin
 
 #_________________________POSTCODES AND PPV____________________________
-#ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT
+#ASSUME ALL POSTCODES and PPV ARE FAKE AND START WITH NUMBER 4 AT THE FRONT, 
 #41000 Shah Alam [Ideal Convention Center (IDCC), Shah Alam] (capacity of 1)
 #42000 Sungai Long [Sungai Long Specialist Hospital, Sungai Long] (capacity of 2)
 #43000 Kajang [The MINES Convention Center, Seri Kembangan] (capacity of 3)
@@ -103,7 +103,6 @@ def newTablePPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
   
-    # SQL command to create table "ppv" in the database
     command = """CREATE TABLE ppv (
     "postcode" INTEGER NOT NULL,
     "name" TEXT NOT NULL,
@@ -121,8 +120,7 @@ def newTablePPV():
 def newTableCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-  
-    # SQL command to create table "covidstats" in the database
+
     command = """CREATE TABLE covid (
     "date" TEXT NOT NULL,
     "cases" INTEGER NOT NULL,
@@ -143,7 +141,6 @@ def newTableVaccinationStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
   
-    # SQL command to create table "vaccinationstats" in the database
     command = """CREATE TABLE vaccinationstats(
     "date" TEXT NOT NULL
     "dose1" INTEGER NOT NULL,
@@ -163,15 +160,70 @@ def newTableVaccinationStats():
 #>>>>>>>>>>>>>ADDING DATA>>>>>>>>>>>>>
 #function to add data into table "ppv"
 def addDataPPV():
-    print
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    postcode = int(input("Postcode: "))
+    name = str(input("Name: "))
+    location = str(input("Location: "))
+    vaccineBrand = str(input("Vaccine Brand: "))
+    patientsPerDay = int(input("Patients Per Day: "))
+  
+    cursor.execute("""
+    INSERT INTO user (postcode, name, location, vaccineBrand, patientsPerDay)
+    VALUES (?,?,?,?,?)
+    """, (postcode, name, location, vaccineBrand, patientsPerDay))
+
+    connection.commit()
+    connection.close()
+    print("PPVs added, redirecting back to main menu shortly.")
+    mainMenuAdmin()
 
 #function to add data into table "covidstats"
 def addDataCOVIDStats():
-    print
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Date: "))
+    cases = int(input("Cases: "))
+    recoveries = int(input("Recoveries: "))
+    active = int(input("Active Cases: "))
+    cumulative  = int(input("Cumulative Cases: "))
+    tests  = int(input("Tests Done: "))
+
+    cursor.execute("""
+    INSERT INTO user (date, cases, recoveries, active, cumulative, tests)
+    VALUES (?,?,?,?,?,?)
+    """, (date, cases, recoveries, active, cumulative, tests))
+
+    connection.commit()
+    connection.close()
+    print("COVID-19 statistics added, redirecting back to main menu shortly.")
+    mainMenuAdmin()
 
 #function to add data into table "vaccinationstats"
 def addDataVaccinationStats():
-    print
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    date = str(input("Date: "))
+    dose1 = int(input("Dose 1: "))
+    dose2 = int(input("Dose 2: "))
+    booster = int(input("Booster doses: "))
+    totaldose1  = int(input("Total dose 1: "))
+    totaldose2  = int(input("Total dose 2: "))
+    totalbooster  = int(input("Total booster doses: "))
+    grandtotal  = int(input("Cumulative administered: "))
+
+    cursor.execute("""
+    INSERT INTO user (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
+    VALUES (?,?,?,?,?,?)
+    """, (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal))
+
+    connection.commit()
+    connection.close()
+    print("Vaccination statistics added, redirecting back to main menu shortly.")
+    mainMenuAdmin()
 
 #>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
 #function to choose what should it be sorted by
