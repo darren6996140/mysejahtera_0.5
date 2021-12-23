@@ -30,6 +30,8 @@ import sqlite3
 import hashlib
 #math for mathematical operations
 import math
+#getpass for masking passwords
+from getpass import getpass
 
 #___________________________GLOBAL VARIABLES___________________________
 active = ""
@@ -525,7 +527,7 @@ def signup():
     #Inputs from the user
     print("Please enter the following details: \n")
     ICnum = str(input("IC number (without dash): "))
-    rawPassword = str(input("Password: "))
+    rawPassword = getpass(input("Password: "))
     #SHA-512 hashing of password
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
@@ -558,7 +560,7 @@ def login():
     print("\n----------------------------LOGIN----------------------------\n")
     while True:
         ICnum = str(input("Enter IC number: "))
-        rawPassword = str(input("Password: "))
+        rawPassword = getpass(input("Password: "))
         hash_object = hashlib.sha512(rawPassword.encode())
         password = hash_object.hexdigest()
         statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}';"
@@ -890,7 +892,7 @@ def viewPersonalInfo():
 def loginAdmin():
     print("----------------------------ADMIN LOGIN----------------------------\n")
     ICnum = str(input("Enter ID: "))
-    rawPassword = str(input("Password: "))
+    rawPassword = getpass(input("Password: "))
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
     connection = sqlite3.connect("mysejahtera_0.5.db")
