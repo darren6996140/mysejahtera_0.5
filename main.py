@@ -65,6 +65,17 @@ active = ""
 #44000 Kuala Lumpur [Bukit Jalil Stadium, Bukit Jalil] (capacity of 5)
 #45000 Petaling Jaya [Dewan Sivik MBPJ, Petaling Jaya] (capacity of 2)
 
+#_________________________VACCINATIONS____________________________
+# if consent = 0, user has not seen the consent page
+#if consent = 1, user consented and will not see the consent page again
+#if consent = 2, user did not consent and will not see the consent page again
+#if notify = 1 and confirmation = 0, user did not see the confirm page
+#if notify = 1 and confirmation = 1, user confirmed and will be assumed vaccinated and notify will automatically go back to 0
+#if notify = 1 and confirmation = 2, user did not confirm and will be given a new appointment, notify will automatically go back to 0
+#if notify = 0 and confirmation = 0, appointment did not arrive
+#if notify = 0 and confirmation = 1, user will be assumed confirmed and vaccinated and vaccinationStatus will return 1, meaning fully vaccinated
+#if notify = 0 and confirmation = 2, user is waiting for appointment
+
 #___________________________FUNCTIONS_________________________________
 #*************************DATABASE FUNCTIONS*************************
 #>>>>>>>>>>>>>CREATING TABLES>>>>>>>>>>>>>
@@ -89,6 +100,7 @@ def newTableUser():
 	"risk" INTEGER,
 	"status" INTEGER,
     "vaccinationStatus" INTEGER,
+    "consent" INTEGER,
 	"userStatus" INTEGER,
     PRIMARY KEY("ICnum")
     );"""
@@ -99,7 +111,7 @@ def newTableUser():
     connection.commit()
     # close the connection
     connection.close()
-    print("Table 'user' with primary key 'ICnum' with attributes 'password', 'name', 'age', 'phone', 'address', 'postcode', 'gender', 'risk', 'status', 'vaccinationStatus', 'userStatus' created.")
+    print("Table 'user' with primary key 'ICnum' with attributes 'password', 'name', 'age', 'phone', 'address', 'postcode', 'gender', 'risk', 'status', 'vaccinationStatus', 'consent', 'userStatus' created.")
     userManage()
 
 #function to create a table named  "ppv", since data is preloaded, no need to call this function
@@ -745,7 +757,50 @@ def status():
 
 #!heavy shet kena tunggu
 def vaccine():
-    print("This will be vaccination")
+    global active
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+    cursor.execute("SELECT consent FROM user WHERE ICnum='{active}'")
+    consent = cursor.fetchall()
+    if consent == 0:
+        print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.")
+        print("First of all, do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)")
+        while True:
+            consent = int(input("Please type a number"))
+            if consent == 1:
+                print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.")
+                cursor.execute("UPDATE user SET consent = 1 WHERE ICnum='{active}'")
+                break
+            elif consent == 2:
+                print("Irresponsible.")
+                cursor.execute("UPDATE user SET consent = 2 WHERE ICnum='{active}'")
+                break
+            else:
+                print("Invalid input.")
+    else:
+        cursor.execute("SELECT notify FROM vaccinations")
+        output = cursor.fetchall()
+        if output == 1:
+            cursor.execute("SELECT location FROM ppv WHERE ICnum=:'{active}'")
+            location = cursor.fetchall()
+            cursor.execute("SELECT datetime FROM ppv WHERE ICnum=:'{active}'")
+            datetime = cursor.fetchall()
+            print("You have been selected to be vaccinated at ",location, "during ",datetime, " hours, would you be able to attend? (Type 1 for yes, type 2 for no)")
+            while True:
+                confirm = int(input("Please enter a number: "))
+                if confirm == 1:
+                    cursor.execute("UPDATE ppv SET CONFIRMATION =  WHERE ICnum=:'{active}'")
+                    print("Great! See you then.")
+                    print("Redirecting you to main menu shortly.")
+                    mainMenu()
+                    break
+                elif confirm == 2:
+                    print("Our administrators will give you a new appointment shortly.")
+                    print("Redirecting you to main menu shortly.")
+                    mainMenu()
+                    break
+                else:
+                    print("Invalid input.")
 
 #function to let users to view or edit personal info
 def personalInfo():
@@ -1082,4 +1137,4 @@ def main():
     if log ==True:
         mainMenu()
 
-startMenu()
+#startMenu()
