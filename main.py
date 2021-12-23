@@ -101,7 +101,7 @@ def newTableUser():
 	"risk" INTEGER,
 	"status" INTEGER,
     "vaccinationStatus" INTEGER,
-    "consent" INTEGER,
+    "consent" INTEGER NOT NULL,
 	"userStatus" INTEGER,
     PRIMARY KEY("ICnum")
     );"""
@@ -141,7 +141,7 @@ def newTableVaccinations():
     cursor = connection.cursor()
   
     command = """CREATE TABLE vaccinations(
-    "id" INTEGER NOT NULL AUTOINCREMENT,
+    "id" INTEGER NOT NULL,
     "datetime" TEXT NOT NULL,
     "ICnum" TEXT NOT NULL,
     "postcode" INTEGER NOT NULL,
@@ -163,7 +163,7 @@ def newTableCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    command = """CREATE TABLE covid (
+    command = """CREATE TABLE covidstats (
     "date" TEXT NOT NULL,
     "cases" INTEGER NOT NULL,
     "recoveries" INTEGER NOT NULL,
@@ -186,7 +186,7 @@ def newTableVaccinationStats():
     cursor = connection.cursor()
   
     command = """CREATE TABLE vaccinationstats(
-    "date" TEXT NOT NULL
+    "date" TEXT NOT NULL,
     "dose1" INTEGER NOT NULL,
     "dose2" INTEGER NOT NULL,
     "booster" INTEGER NOT NULL,
@@ -217,7 +217,7 @@ def addDataPPV():
   
     #insert into table from user input
     cursor.execute("""
-    INSERT INTO user (postcode, name, location, vaccineBrand, patientsPerDay)
+    INSERT INTO ppv (postcode, name, location, vaccineBrand, patientsPerDay)
     VALUES (?,?,?,?,?)
     """, (postcode, name, location, vaccineBrand, patientsPerDay))
 
@@ -240,8 +240,8 @@ def addDataCOVIDStats():
     tests  = int(input("Tests Done: "))
 
     cursor.execute("""
-    INSERT INTO user (date, cases, recoveries, deaths, active, cumulative, tests)
-    VALUES (?,?,?,?,?,?)
+    INSERT INTO covidstats (date, cases, recoveries, deaths, active, cumulative, tests)
+    VALUES (?,?,?,?,?,?,?)
     """, (date, cases, recoveries, deaths, active, cumulative, tests))
 
     connection.commit()
@@ -264,8 +264,8 @@ def addDataVaccinationStats():
     grandtotal  = int(input("Cumulative administered: "))
 
     cursor.execute("""
-    INSERT INTO user (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
-    VALUES (?,?,?,?,?,?)
+    INSERT INTO vaccinationstats (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal)
+    VALUES (?,?,?,?,?,?,?,?)
     """, (date, dose1, dose2, booster, totaldose1, totaldose2, totalbooster, grandtotal))
 
     connection.commit()
@@ -286,7 +286,7 @@ def updateDataPPV():
     patientsPerDay = int(input("New Patients Per Day: "))
   
     #updates the table of according to postcode
-    statement = f"UPDATE user SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
+    statement = f"UPDATE covidstats SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -307,7 +307,7 @@ def updateDataCOVIDStats():
     cumulative  = int(input("New cumulative cases: "))
     tests  = int(input("New tests done: "))
   
-    statement = f"UPDATE user SET cases='{cases}', recoveries='{recoveries}', deaths='{deaths}', active='{active}', cumulative='{cumulative}', tests='{tests}' WHERE date = '{date}';"
+    statement = f"UPDATE covidstats SET cases='{cases}', recoveries='{recoveries}', deaths='{deaths}', active='{active}', cumulative='{cumulative}', tests='{tests}' WHERE date = '{date}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -329,7 +329,7 @@ def updateDataVaccinationStats():
     totalbooster  = int(input("New total booster doses: "))
     grandtotal  = int(input("New cumulative administered: "))
   
-    statement = f"UPDATE user SET dose1='{dose1}', dose2='{dose2}', booster='{booster}', totaldose1='{totaldose1}', totaldose2='{totaldose2}', totalbooster='{totalbooster}', grandtotal='{grandtotal}' WHERE date = '{date}';"
+    statement = f"UPDATE vaccinationstats SET dose1='{dose1}', dose2='{dose2}', booster='{booster}', totaldose1='{totaldose1}', totaldose2='{totaldose2}', totalbooster='{totalbooster}', grandtotal='{grandtotal}' WHERE date = '{date}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -346,7 +346,7 @@ def deleteDataPPV():
     postcode = int(input("Please enter the post code of the PPV to be deleted: "))
   
     #deletes the row according to postcode
-    statement = f"DELETE FROM ppv WHERE postcode='{postcode};"
+    statement = f"DELETE FROM ppv WHERE postcode='{postcode}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -361,7 +361,7 @@ def deleteDataCOVIDStats():
 
     date = str(input("Please enter the date of the statistics to be deleted: "))
   
-    statement = f"DELETE FROM covidstats WHERE date='{date};"
+    statement = f"DELETE FROM covidstats WHERE date='{date}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -376,7 +376,7 @@ def deleteDataVaccinationStats():
 
     date = str(input("Please enter the date of the statistics to be deleted: "))
   
-    statement = f"DELETE FROM covidstats WHERE date='{date};"
+    statement = f"DELETE FROM vaccinationstats WHERE date='{date}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -547,8 +547,8 @@ def signup():
     connection.close()
 
     print("Signup successful, you will be redirected shortly.")
-    #Redirect to login page
-    login()
+    #Redirect to start menu page
+    startMenu()
 
 #function to login for normal users
 def login():
@@ -691,8 +691,8 @@ def userRisk():
             print("Invalid input.\n")
 
     
-    print("Please state your occupation.")
-    print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.")
+    print("Please state your occupation.\n")
+    print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.\n")
     
     while True:    
         job = int(input("Enter here: "))
@@ -766,7 +766,7 @@ def status():
     print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#function for users to update and view vaccination status
+#!function for users to update and view vaccination status
 def vaccine():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -862,9 +862,8 @@ def editPersonalInfo():
     postcode = int(input("Postcode: "))
     gender = int(input("Gender (0 for male, 1 for female): "))
   
-    cursor.execute("""UPDATE user 
-    SET name='{name}', age='{age}', phone='{phone}', address='{address}', postcode='{postcode}', gender='{gender}' WHERE ICnum = '{active}';
-    """, (name, age, phone, address, postcode, gender))
+    statement = f"UPDATE user SET name='{name}', age='{age}', phone='{phone}', address='{address}', postcode='{postcode}', gender='{gender}' WHERE ICnum = '{active}';"
+    cursor.execute(statement)
 
     connection.commit()
     connection.close()
@@ -873,11 +872,12 @@ def editPersonalInfo():
 
 #function to export all data in table "user" by the active user
 def viewPersonalInfo():
+    global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
     #Selects everything from table "covidstats"
-    cursor.execute(f"SELECT * FROM covidstats")
+    cursor.execute(f"SELECT * FROM user WHERE ICnum='{active}'")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -899,6 +899,7 @@ def loginAdmin():
     cursor.execute(statement)
     if not cursor.fetchone():
         print("Login failed, please try again.")
+        startMenu()
     else:
         connection.close()
         mainMenuAdmin()
@@ -962,8 +963,8 @@ def PPVManage():
         else:
             print("Invalid input.")
 
-#function to manage vaccination data
-def vaccineManage():
+#function to manage vaccination appointments
+def vaccineManageAppoint():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
@@ -995,6 +996,26 @@ def vaccineManage():
                 cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
                 postcode = cursor.fetchall()
                 cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
+
+def vaccineManage():
+    print("----------------------------VACCINATION MANAGEMENT----------------------------\n")
+    print("What would you like to do?")
+    print("Type 1 to create table vaccinations.")
+    print("Type 2 to manage vaccinations.")
+    print("Type 3 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            newTableVaccinations()
+        elif num == 2:
+            vaccineManage()
+            break
+        elif num == 3:
+            mainMenuAdmin()
+            break
+        else:
+            print("Invalid input.")
 
 #function to choose what stats to manage
 def statsManage():
@@ -1145,6 +1166,8 @@ def mainMenu():
             dataExportCOVIDStats()
             print("\nThis is the list of vaccination statistics starting from 1st January 2022\n")
             dataExportVaccinationStats()
+            print("\nRedirecting to main menu shortly. \n")
+            mainMenu()
             break
         elif num == 5:
             logout()
@@ -1185,3 +1208,10 @@ def mainMenuAdmin():
 
 #call this for magic to happen
 startMenu()
+
+'''
+INSERT INTO vaccinations("datetime", "ICnum", "postcode", "notify", "confirmation")
+VALUES('202112311200', '012345678910', 44000, 0, 0)
+'''
+#!todo beautify data exports
+#!todo better user info outputs
