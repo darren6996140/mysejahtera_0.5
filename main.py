@@ -557,7 +557,7 @@ def login():
         rawPassword = str(input("Password: "))
         hash_object = hashlib.sha512(rawPassword.encode())
         password = hash_object.hexdigest()
-        statement = f"SELECT ICnum from user WHERE ICnum='{ICnum}' AND password = '{password}';"
+        statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}';"
         cursor.execute(statement)
         if not cursor.fetchone():  # An empty result evaluates to False.
             print("Login failed, please try again.")
@@ -889,7 +889,7 @@ def loginAdmin():
     password = hash_object.hexdigest()
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-    statement = f"SELECT ICnum from user WHERE ICnum='{ICnum}' AND password = '{password}' AND userStatus = 1;"
+    statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}' AND userStatus = 1;"
     cursor.execute(statement)
     if not cursor.fetchone():
         print("Login failed, please try again.")
@@ -978,13 +978,17 @@ def vaccineManage():
         if ICnum == 0:
             print("You will be redirected shortly.")
             mainMenuAdmin()
+            connection.close()
             break
         else:
-            cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
-            postcode = cursor.fetchall()
-            cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
-
-    connection.close()
+            statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}'"
+            cursor.execute(statement)
+            if not cursor.fetchone():
+                print("No such person exists.")
+            else:
+                cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
+                postcode = cursor.fetchall()
+                cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
 
 #function to choose what stats to manage
 def statsManage():
