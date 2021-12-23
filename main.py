@@ -215,6 +215,7 @@ def addDataPPV():
     vaccineBrand = str(input("Vaccine Brand: "))
     patientsPerDay = int(input("Patients Per Day: "))
   
+    #insert into table from user input
     cursor.execute("""
     INSERT INTO user (postcode, name, location, vaccineBrand, patientsPerDay)
     VALUES (?,?,?,?,?)
@@ -284,6 +285,7 @@ def updateDataPPV():
     vaccineBrand = str(input("New Vaccine Brand: "))
     patientsPerDay = int(input("New Patients Per Day: "))
   
+    #updates the table of according to postcode
     statement = f"UPDATE user SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
     cursor.execute(statement)
 
@@ -343,6 +345,7 @@ def deleteDataPPV():
 
     postcode = int(input("Please enter the post code of the PPV to be deleted: "))
   
+    #deletes the row according to postcode
     statement = f"DELETE FROM ppv WHERE postcode='{postcode};"
     cursor.execute(statement)
 
@@ -564,6 +567,7 @@ def login():
             print("Login failed, please try again.")
         else:
             print("Welcome!")
+            #the line below acts as a cookie to record the active user
             active = ICnum
             connection.close()
             mainMenu()
@@ -575,6 +579,7 @@ def logout():
     active = ""
     print("You have been logged out.")
     startMenu()
+    return active
 
 #function for users to assess risk
 def userRisk():
