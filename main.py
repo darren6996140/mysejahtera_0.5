@@ -88,6 +88,7 @@ def newTableUser():
 	"gender" INTEGER,
 	"risk" INTEGER,
 	"status" INTEGER,
+    "vaccinationStatus" INTEGER,
 	"userStatus" INTEGER,
     PRIMARY KEY("ICnum")
     );"""
@@ -98,6 +99,8 @@ def newTableUser():
     connection.commit()
     # close the connection
     connection.close()
+    print("Table 'user' with primary key 'ICnum' with attributes 'password', 'name', 'age', 'phone', 'address', 'postcode', 'gender', 'risk', 'status', 'vaccinationStatus', 'userStatus' created.")
+    userManage()
 
 #function to create a table named  "ppv", since data is preloaded, no need to call this function
 def newTablePPV():
@@ -116,10 +119,10 @@ def newTablePPV():
     cursor.execute(command)
     connection.commit()
     connection.close()
+    print ("Table 'ppv' with primary key 'postcode' with attributes 'name', 'location', 'vaccineBrand', 'patientsPerDay' created.")
     PPVManage()
 
 #function to create a table named  "vaccinations", since data is preloaded, no need to call this function (datetime format: YYYYMMDDHHMM)
-#!needs much work (vaccination status[link to table user], etc.)
 def newTableVaccinations():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -139,6 +142,8 @@ def newTableVaccinations():
     cursor.execute(command)
     connection.commit()
     connection.close()
+    print("Table 'vaccinations' with primary key 'id' autoincrementing with attributes 'datetime', 'icnum' as foreign key to table 'user', 'postcode' as foreign key to table 'ppv', 'notify', 'confirmation'' created.")
+    vaccineManage()
 
 #function to create a table named  "covidstats", since data is preloaded, no need to call this function
 def newTableCOVIDStats():
@@ -159,6 +164,8 @@ def newTableCOVIDStats():
     cursor.execute(command)
     connection.commit()
     connection.close()
+    print ("Table 'covidstats' with primary key 'date' with attributes 'cases', 'recoveries', 'deaths', 'active', 'cumulative', 'tests' created.")
+    covidStatsManage()
 
 #function to create a table named  "vaccinationstats", since data is preloaded, no need to call this function
 def newTableVaccinationStats():
@@ -180,6 +187,8 @@ def newTableVaccinationStats():
     cursor.execute(command)
     connection.commit()
     connection.close()
+    print ("Table 'vaccinationstats' with primary key date with attributes 'dose1', 'dose2', 'booster', 'totaldose1', 'totaldose2', 'totalbooster', 'grandtotal' created.")
+    vaccinationStatsManage()
 
 #>>>>>>>>>>>>>ADDING DATA>>>>>>>>>>>>>
 #function to add data into table "ppv"
@@ -200,8 +209,8 @@ def addDataPPV():
 
     connection.commit()
     connection.close()
-    print("PPVs added, redirecting back to main menu shortly.")
-    mainMenuAdmin()
+    print("PPVs added, redirecting back to PPV management shortly.")
+    PPVManage()
 
 #function to add data into table "covidstats"
 def addDataCOVIDStats():
@@ -738,8 +747,29 @@ def status():
 def vaccine():
     print("This will be vaccination")
 
-#function to let users to update personal info
+#function to let users to view or edit personal info
 def personalInfo():
+    print("-----------------------PERSONAL INFORMATION-----------------------\n")
+    print("Type 1 to view your information.")
+    print("Type 2 to edit your information.")
+    print("Type 3 to return to main menu.")
+    while True:
+        num = int(input("Enter a number: "))
+        print("\n-------------------------------------------------------------\n")
+        if num == 1:
+            viewPersonalInfo()
+            break
+        elif num == 2:
+            editPersonalInfo()
+            break
+        elif num == 3:
+            mainMenu()
+            break
+        else:
+            print("Invalid input.")
+
+#function to let users to update personal info
+def editPersonalInfo():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     print("\nPlease enter the following details: \n")
@@ -756,7 +786,23 @@ def personalInfo():
 
     connection.commit()
     connection.close()
-            
+    print("Information updated, redirecting back to personal information shortly.")
+    personalInfo()
+
+#function to export all data in table "user" by the active user
+def viewPersonalInfo():
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    #Selects everything from table "covidstats"
+    cursor.execute("SELECT * FROM covidstats")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+    connection.close()
+    print("Redirecting back to personal information shortly.")
+    personalInfo()
+
 #~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
 def loginAdmin():
@@ -788,7 +834,6 @@ def userManage():
         print("\n-------------------------------------------------------------\n")
         if num == 1:
             newTableUser()
-            print("Table 'user' with primary key 'ICnum' with attributes 'password', 'name', 'age', 'phone', 'address', 'postcode', 'gender', 'risk', 'status', 'userStatus' created.")
             break
         elif num == 2:
             dataExportUser()
@@ -815,7 +860,6 @@ def PPVManage():
         print("\n-------------------------------------------------------------\n")
         if num == 1:
             newTablePPV()
-            print ("Table 'ppv' with primary key 'postcode' with attributes 'name', 'location', 'vaccineBrand', 'patientsPerDay' created.")
             break
         elif num == 2:
             dataExportPPV()
@@ -877,7 +921,7 @@ def covidStatsManage():
         print("\n-------------------------------------------------------------\n")
         if num == 1:
             newTableCOVIDStats()
-            print ("Table 'covidstats' with primary key 'date' with attributes 'cases', 'recoveries', 'deaths', 'active', 'cumulative', 'tests' created.")
+            break
         elif num == 2:
             dataExportCOVIDStats()
             covidStatsManage()
@@ -912,7 +956,7 @@ def vaccinationStatsManage():
         print("\n-------------------------------------------------------------\n")
         if num == 1:
             newTableVaccinationStats()
-            print ("Table 'vaccinationstats' with primary key date with attributes 'dose1', 'dose2', 'booster', 'totaldose1', 'totaldose2', 'totalbooster', 'grandtotal' created.")
+            break
         elif num == 2:
             dataExportVaccinationStats()
             vaccinationStatsManage()
@@ -967,12 +1011,12 @@ def mainMenu():
     name ="".join(i for i in oldName if i not in list) 
 
     print("----------------------------MAIN MENU----------------------------\n")
-    print("Welcome", name, "please type a number.\n")
+    print("Welcome", name, "please type a number.")
     print("Type 1 for vaccination appointments.")
     print("Type 2 for risk assesment.")
-    print("Type 3 for current COVID-19 updates.")
-    print("Type 4 for updating personal information.\n")
-    print("Type 5 to log out.\n")
+    print("Type 3 for updating personal information.")
+    print("Type 4 for current COVID-19 updates.")
+    print("Type 5 to log out.")
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -983,11 +1027,13 @@ def mainMenu():
             userRisk()
             break
         elif num == 3:
-            print("\nThis is the list of COVID-19 statistics starting from 1st January 2022\n")
-            dataExportCOVIDStats()
+            personalInfo()
             break
         elif num == 4:
-            personalInfo()
+            print("\nThis is the list of COVID-19 statistics starting from 1st January 2022\n")
+            dataExportCOVIDStats()
+            print("\nThis is the list of vaccination statistics starting from 1st January 2022\n")
+            dataExportVaccinationStats()
             break
         elif num == 5:
             logout()
