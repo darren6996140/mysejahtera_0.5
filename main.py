@@ -21,6 +21,7 @@
 # https://www.geeksforgeeks.org/sql-using-python/
 # https://docs.python.org/3/library/hashlib.html
 # https://www.sqlite.org/index.html
+#https://dba.stackexchange.com/questions/129023/selecting-data-from-another-table-using-a-foreign-key
 
 #_________________________MODULE IMPORTS_____________________________
 #sqlite3 for usage of SQLite tables and database to store data
@@ -760,7 +761,7 @@ def status():
     print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#!function for users to update and view vaccination status
+#function for users to update and view vaccination status
 def vaccine():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -769,7 +770,7 @@ def vaccine():
     consent = cursor.fetchall()
     if consent == 0:
         print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.")
-        print("First of all, do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)")
+        print("Do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)")
         while True:
             consent = int(input("Please type a number"))
             if consent == 1:
@@ -794,10 +795,10 @@ def vaccine():
     else:
         cursor.execute(f"SELECT notify FROM vaccinations")
         notify = cursor.fetchall()
-        if notify == 1: #!https://dba.stackexchange.com/questions/129023/selecting-data-from-another-table-using-a-foreign-key
-            cursor.execute(f"SELECT location FROM ppv WHERE ICnum='{active}'")
+        if notify == 1:
+            cursor.execute(f"SELECT postcode FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
             location = cursor.fetchall()
-            cursor.execute(f"SELECT datetime FROM ppv WHERE ICnum='{active}'")
+            cursor.execute(f"SELECT datetime FROM vaccinations WHERE ICnum='{active}'")
             datetime = cursor.fetchall()
             print("You have been selected to be vaccinated at ",location, "during ",datetime, " (YYYYMMDDHHMM), would you be able to attend? (Type 1 for yes, type 2 for no)")
             while True:
@@ -977,8 +978,8 @@ def vaccineManage():
         ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu): "))
         if ICnum == 0:
             print("You will be redirected shortly.")
-            mainMenuAdmin()
             connection.close()
+            mainMenuAdmin()
             break
         else:
             statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}'"
@@ -1177,14 +1178,5 @@ def mainMenuAdmin():
         else:
             print("Invalid input.")
 
-#*****MAIN FUNCTION******(needed not needed ¯\_(ツ)_/¯)
-def main():
-    startMenu()
-    login()
-    log = login()
-    loginUser = login()
-    loginUser = login()
-    if log ==True:
-        mainMenu()
-
-#startMenu()
+#call this for magic to happen
+startMenu()
