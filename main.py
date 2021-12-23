@@ -272,6 +272,7 @@ def addDataVaccinationStats():
     vaccinationStatsManage()
 
 #>>>>>>>>>>>>>UPDATING DATA>>>>>>>>>>>>>
+#function to update data in table "ppv"
 def updateDataPPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -290,6 +291,7 @@ def updateDataPPV():
     print("Information updated, redirecting to PPV management shortly.")
     PPVManage()
 
+#function to update data in table "covidstats"
 def updateDataCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -310,6 +312,7 @@ def updateDataCOVIDStats():
     print("Information updated, redirecting to COVID-19 stats management shortly.")
     covidStatsManage()
 
+#function to update data in table "vaccinationstats"
 def updateDataVaccinationStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -332,6 +335,7 @@ def updateDataVaccinationStats():
     vaccinationStatsManage()
 
 #>>>>>>>>>>>>>DATA DELETION>>>>>>>>>>>>>
+#function to delete data in table "ppv"
 def deleteDataPPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -346,6 +350,7 @@ def deleteDataPPV():
     print("PPV deleted, redirecting to PPV management shortly.")
     PPVManage()
 
+#function to delete data in table "covidstats"
 def deleteDataCOVIDStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -360,6 +365,7 @@ def deleteDataCOVIDStats():
     print("Statistics deleted, redirecting to COVID-19 stats management shortly.")
     covidStatsManage()
 
+#function to delete data in table "vaccinationstats"
 def deleteDataVaccinationStats():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
@@ -403,7 +409,7 @@ def dataExportUserNormal():
     cursor = connection.cursor()
 
     #Selects everything from table "user"
-    cursor.execute("SELECT * FROM user")
+    cursor.execute(f"SELECT * FROM user")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -415,7 +421,7 @@ def dataExportUserRisk():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts risk by ascending order
-    cursor.execute("SELECT columns FROM user ORDER BY risk;")
+    cursor.execute(f"SELECT * FROM user ORDER BY risk;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -427,7 +433,7 @@ def dataExportUserStatus():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts status by ascending order
-    cursor.execute("SELECT columns FROM user ORDER BY status;")
+    cursor.execute(f"SELECT * FROM user ORDER BY status;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -439,7 +445,7 @@ def dataExportUserAge():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts age by ascending order
-    cursor.execute("SELECT columns FROM user ORDER BY age;")
+    cursor.execute(f"SELECT * FROM user ORDER BY age;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -451,7 +457,7 @@ def dataExportUserPostcode():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts postcode by ascending order
-    cursor.execute("SELECT columns FROM user ORDER BY postcode;")
+    cursor.execute(f"SELECT * FROM user ORDER BY postcode;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -463,7 +469,7 @@ def dataExportPPV():
     cursor = connection.cursor()
 
     #Selects everything from table "ppv"
-    cursor.execute("SELECT * FROM ppv")
+    cursor.execute(f"SELECT * FROM ppv")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -475,7 +481,7 @@ def dataExportVaccinations():
     cursor = connection.cursor()
 
     #Selects everything from table "vaccinations" and sorts datetime by ascending order
-    cursor.execute("SELECT columns FROM vaccinations ORDER BY datetime;")
+    cursor.execute(f"SELECT * FROM vaccinations ORDER BY datetime;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -487,7 +493,7 @@ def dataExportCOVIDStats():
     cursor = connection.cursor()
 
     #Selects everything from table "covidstats"
-    cursor.execute("SELECT * FROM covidstats")
+    cursor.execute(f"SELECT * FROM covidstats")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -499,14 +505,13 @@ def dataExportVaccinationStats():
     cursor = connection.cursor()
 
     #Selects everything from table "vaccinationstats"
-    cursor.execute("SELECT * FROM vaccinationstats")
+    cursor.execute(f"SELECT * FROM vaccinationstats")
     output = cursor.fetchall()
     for i in output:
        print(i)
     connection.close()
 
 #*************************USER INTERACTION FUNCTIONS*************************
-
 #~~~~~~~~NORMAL USER~~~~~~~~
 #function to input new user's data into table "user"
 def signup():
@@ -755,12 +760,12 @@ def status():
     print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#!heavy shet kena tunggu
+#!function for users to update and view vaccination status
 def vaccine():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-    cursor.execute("SELECT consent FROM user WHERE ICnum='{active}'")
+    cursor.execute(f"SELECT consent FROM user WHERE ICnum='{active}'")
     consent = cursor.fetchall()
     if consent == 0:
         print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.")
@@ -769,38 +774,54 @@ def vaccine():
             consent = int(input("Please type a number"))
             if consent == 1:
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.")
-                cursor.execute("UPDATE user SET consent = 1 WHERE ICnum='{active}'")
+                cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum='{active}'")
+                print("You will be redirected back to main menu shortly.")
+                mainMenu()
                 break
             elif consent == 2:
                 print("Irresponsible.")
-                cursor.execute("UPDATE user SET consent = 2 WHERE ICnum='{active}'")
+                cursor.execute(f"UPDATE user SET consent = 2 WHERE ICnum='{active}'")
+                print("You will be redirected back to main menu shortly.")
+                mainMenu()
                 break
             else:
                 print("Invalid input.")
+
+    elif consent == 2:
+        print("Irresponsible.")
+        mainMenu()
+
     else:
-        cursor.execute("SELECT notify FROM vaccinations")
-        output = cursor.fetchall()
-        if output == 1:
-            cursor.execute("SELECT location FROM ppv WHERE ICnum=:'{active}'")
+        cursor.execute(f"SELECT notify FROM vaccinations")
+        notify = cursor.fetchall()
+        if notify == 1: #!https://dba.stackexchange.com/questions/129023/selecting-data-from-another-table-using-a-foreign-key
+            cursor.execute(f"SELECT location FROM ppv WHERE ICnum='{active}'")
             location = cursor.fetchall()
-            cursor.execute("SELECT datetime FROM ppv WHERE ICnum=:'{active}'")
+            cursor.execute(f"SELECT datetime FROM ppv WHERE ICnum='{active}'")
             datetime = cursor.fetchall()
-            print("You have been selected to be vaccinated at ",location, "during ",datetime, " hours, would you be able to attend? (Type 1 for yes, type 2 for no)")
+            print("You have been selected to be vaccinated at ",location, "during ",datetime, " (YYYYMMDDHHMM), would you be able to attend? (Type 1 for yes, type 2 for no)")
             while True:
                 confirm = int(input("Please enter a number: "))
                 if confirm == 1:
-                    cursor.execute("UPDATE ppv SET CONFIRMATION =  WHERE ICnum=:'{active}'")
+                    cursor.execute(f"UPDATE vaccinations SET confirmation = 1, notify = 0 WHERE ICnum='{active}'")
+                    cursor.execute(f"UPDATE user SET vaccinationStatus = 1 WHERE ICnum='{active}'")
                     print("Great! See you then.")
                     print("Redirecting you to main menu shortly.")
                     mainMenu()
                     break
                 elif confirm == 2:
+                    cursor.execute(f"UPDATE vaccinations SET confirmation = 2, notify = 0 WHERE ICnum='{active}'")
                     print("Our administrators will give you a new appointment shortly.")
                     print("Redirecting you to main menu shortly.")
                     mainMenu()
                     break
                 else:
                     print("Invalid input.")
+        
+        else:
+            print("Please be patient, our administrators are finding open appointments for you.")
+            print("Redirecting you to main menu shortly.")
+            mainMenu()
 
 #function to let users to view or edit personal info
 def personalInfo():
@@ -850,7 +871,7 @@ def viewPersonalInfo():
     cursor = connection.cursor()
 
     #Selects everything from table "covidstats"
-    cursor.execute("SELECT * FROM covidstats")
+    cursor.execute(f"SELECT * FROM covidstats")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -937,8 +958,33 @@ def PPVManage():
 
 #function to manage vaccination data
 def vaccineManage():
-    print("This will be vaccination management")
-#todo!
+    connection = sqlite3.connect("mysejahtera_0.5.db")
+    cursor = connection.cursor()
+
+    print("This is the list of users that are waiting for an appointment.")
+    cursor.execute(f"SELECT * FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+
+    print("This is the list of users that rejected the first appointment are waiting for a 2nd appointment.")
+    cursor.execute(f"SELECT * FROM vaccinations WHERE notify = 0 AND confirmation = 2;")
+    output = cursor.fetchall()
+    for i in output:
+       print(i)
+
+    while True:
+        ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu): "))
+        if ICnum == 0:
+            print("You will be redirected shortly.")
+            mainMenuAdmin()
+            break
+        else:
+            cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
+            postcode = cursor.fetchall()
+            cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
+
+    connection.close()
 
 #function to choose what stats to manage
 def statsManage():
