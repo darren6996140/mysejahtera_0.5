@@ -21,7 +21,7 @@
 # https://www.geeksforgeeks.org/sql-using-python/
 # https://docs.python.org/3/library/hashlib.html
 # https://www.sqlite.org/index.html
-#https://dba.stackexchange.com/questions/129023/selecting-data-from-another-table-using-a-foreign-key
+# https://dba.stackexchange.com/questions/129023/selecting-data-from-another-table-using-a-foreign-key
 
 #_________________________MODULE IMPORTS_____________________________
 #sqlite3 for usage of SQLite tables and database to store data
@@ -30,8 +30,6 @@ import sqlite3
 import hashlib
 #math for mathematical operations
 import math
-#getpass for masking passwords
-from getpass import getpass
 
 #___________________________GLOBAL VARIABLES___________________________
 active = ""
@@ -513,6 +511,7 @@ def dataExportVaccinationStats():
     #Selects everything from table "vaccinationstats"
     cursor.execute(f"SELECT * FROM vaccinationstats")
     output = cursor.fetchall()
+    print("Date (YYYY,MM,DD), Dose 1, Dose 2, Boosters, Total Dose 1, Total Dose 2, Total Booster, Total Doses Given")
     for i in output:
        print(i)
     connection.close()
@@ -527,7 +526,7 @@ def signup():
     #Inputs from the user
     print("Please enter the following details: \n")
     ICnum = str(input("IC number (without dash): "))
-    rawPassword = getpass(input("Password: "))
+    rawPassword = str(input("Password: "))
     #SHA-512 hashing of password
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
@@ -560,7 +559,7 @@ def login():
     print("\n----------------------------LOGIN----------------------------\n")
     while True:
         ICnum = str(input("Enter IC number: "))
-        rawPassword = getpass(input("Password: "))
+        rawPassword = str(input("Password: "))
         hash_object = hashlib.sha512(rawPassword.encode())
         password = hash_object.hexdigest()
         statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}';"
@@ -869,7 +868,7 @@ def editPersonalInfo():
 
     connection.commit()
     connection.close()
-    print("Information updated, redirecting back to personal information shortly.")
+    print("Information updated, redirecting back to personal information shortly.\n")
     personalInfo()
 
 #function to export all data in table "user" by the active user
@@ -879,12 +878,13 @@ def viewPersonalInfo():
     cursor = connection.cursor()
 
     #Selects everything from table "covidstats"
-    cursor.execute(f"SELECT * FROM user WHERE ICnum='{active}'")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode FROM user WHERE ICnum='{active}'")
     output = cursor.fetchall()
+    print ("IC Number, Name, Age, Phone Number, Address, Postcode")
     for i in output:
        print(i)
     connection.close()
-    print("Redirecting back to personal information shortly.")
+    print("Redirecting back to personal information shortly.\n")
     personalInfo()
 
 #~~~~~~~~ADMINS~~~~~~~~
@@ -892,7 +892,7 @@ def viewPersonalInfo():
 def loginAdmin():
     print("----------------------------ADMIN LOGIN----------------------------\n")
     ICnum = str(input("Enter ID: "))
-    rawPassword = getpass(input("Password: "))
+    rawPassword = str(input("Password: "))
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -1215,5 +1215,5 @@ startMenu()
 INSERT INTO vaccinations("datetime", "ICnum", "postcode", "notify", "confirmation")
 VALUES('202112311200', '012345678910', 44000, 0, 0)
 '''
-#!todo beautify data exports
-#!todo better user info outputs
+#!todo beautify data exports [no can do]
+#!todo better user info outputs [no can do]
