@@ -783,7 +783,7 @@ def vaccine():
             cons = int(input("Please type a number: "))
             if cons == 1:
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
-                cursor.execute(f"UPDATE user SET consent= 1  WHERE ICnum='{active}'")
+                cursor.execute(f"UPDATE user SET consent = 1  WHERE ICnum='{active}'")
                 cursor.execute(f"INSERT INTO vaccinations (ICnum, notify) VALUES ('{active}', 1)")
                 print("You will be redirected back to main menu shortly.\n")
                 connection.close()
@@ -1218,5 +1218,5 @@ def mainMenuAdmin():
             print("Invalid input.\n")
 
 #call this for magic to happen
-#startMenu()
-vaccine()
+startMenu()
+#vaccine()
