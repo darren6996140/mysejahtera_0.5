@@ -32,7 +32,7 @@ import hashlib
 import math
 
 #___________________________GLOBAL VARIABLES___________________________
-active = ""
+active = "010101010101"
 
 #____________________________USER DETAILS_______________________________
 # 1. username: 010101010101 password: qwertya postcode:41000
@@ -565,7 +565,7 @@ def login():
         statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}';"
         cursor.execute(statement)
         if not cursor.fetchone():  # An empty result evaluates to False.
-            print("Login failed, please try again.")
+            print("Login failed, please try again.\n")
         else:
             print("Welcome!")
             #the line below acts as a cookie to record the active user
@@ -773,35 +773,42 @@ def vaccine():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute(f"SELECT consent FROM user WHERE ICnum='{active}'")
-    consent = cursor.fetchall()
-    if consent == 0:
-        print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.")
-        print("Do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)")
+    oldConsent = str(cursor.fetchall())
+    list=['[','(',']',')',',',"'"]
+    consent ="".join(i for i in oldConsent if i not in list)
+    if consent == "0":
+        print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.\n")
+        print("Do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)\n")
         while True:
-            consent = int(input("Please type a number"))
-            if consent == 1:
-                print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.")
-                cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum='{active}'")
-                print("You will be redirected back to main menu shortly.")
+            cons = int(input("Please type a number: "))
+            if cons == 1:
+                print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
+                cursor.execute(f"UPDATE user SET consent= 1  WHERE ICnum='{active}'")
+                cursor.execute(f"INSERT INTO vaccinations (ICnum, notify) VALUES ('{active}', 1)")
+                print("You will be redirected back to main menu shortly.\n")
+                connection.close()
                 mainMenu()
                 break
-            elif consent == 2:
-                print("Irresponsible.")
+            elif cons == 2:
+                print("Irresponsible.\n")
                 cursor.execute(f"UPDATE user SET consent = 2 WHERE ICnum='{active}'")
-                print("You will be redirected back to main menu shortly.")
+                print("You will be redirected back to main menu shortly.\n")
+                connection.close()
                 mainMenu()
                 break
             else:
-                print("Invalid input.")
+                print("Invalid input.\n")
 
-    elif consent == 2:
+    elif consent == "2":
         print("Irresponsible.")
         mainMenu()
 
     else:
         cursor.execute(f"SELECT notify FROM vaccinations")
-        notify = cursor.fetchall()
-        if notify == 1:
+        oldNotify = str(cursor.fetchall())
+        list=['[','(',']',')',',',"'"]
+        notify ="".join(i for i in oldNotify if i not in list)
+        if notify == "1":
             cursor.execute(f"SELECT postcode FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
             location = cursor.fetchall()
             cursor.execute(f"SELECT datetime FROM vaccinations WHERE ICnum='{active}'")
@@ -814,16 +821,18 @@ def vaccine():
                     cursor.execute(f"UPDATE user SET vaccinationStatus = 1 WHERE ICnum='{active}'")
                     print("Great! See you then.")
                     print("Redirecting you to main menu shortly.")
+                    connection.close()
                     mainMenu()
                     break
                 elif confirm == 2:
                     cursor.execute(f"UPDATE vaccinations SET confirmation = 2, notify = 0 WHERE ICnum='{active}'")
                     print("Our administrators will give you a new appointment shortly.")
                     print("Redirecting you to main menu shortly.")
+                    connection.close()
                     mainMenu()
                     break
                 else:
-                    print("Invalid input.")
+                    print("Invalid input.\n")
         
         else:
             print("Please be patient, our administrators are finding open appointments for you.")
@@ -849,7 +858,7 @@ def personalInfo():
             mainMenu()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to let users to update personal info
 def editPersonalInfo():
@@ -900,7 +909,7 @@ def loginAdmin():
     statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}' AND userStatus = 1;"
     cursor.execute(statement)
     if not cursor.fetchone():
-        print("Login failed, please try again.")
+        print("Login failed, please try again./n")
         startMenu()
     else:
         connection.close()
@@ -928,7 +937,7 @@ def userManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to manage PPV data
 def PPVManage():
@@ -963,7 +972,7 @@ def PPVManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to manage vaccination appointments
 def vaccineManageAppoint():
@@ -1017,7 +1026,7 @@ def vaccineManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to choose what stats to manage
 def statsManage():
@@ -1038,7 +1047,7 @@ def statsManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to manage COVID-19 stats
 def covidStatsManage():
@@ -1073,7 +1082,7 @@ def covidStatsManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function to manage vaccination stats
 def vaccinationStatsManage():
@@ -1108,7 +1117,7 @@ def vaccinationStatsManage():
             mainMenuAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #*************************MENUS FUNCTIONS*************************
 #function for menu when first running the program
@@ -1131,7 +1140,7 @@ def startMenu():
             loginAdmin()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #function for menu when user successfully login
 def mainMenu():
@@ -1142,7 +1151,7 @@ def mainMenu():
     oldName = str(cursor.fetchall())
     #for removing unnecessary characters
     list=['[','(',']',')','.',"'"] 
-    name ="".join(i for i in oldName if i not in list) 
+    name ="".join(i for i in oldName if i not in list)
 
     print("----------------------------MAIN MENU----------------------------\n")
     print("Welcome", name, "please type a number.")
@@ -1175,7 +1184,7 @@ def mainMenu():
             logout()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
     connection.close()
 
 #function for menu when admin logged in
@@ -1206,14 +1215,8 @@ def mainMenuAdmin():
             logout()
             break
         else:
-            print("Invalid input.")
+            print("Invalid input.\n")
 
 #call this for magic to happen
-startMenu()
-
-'''
-INSERT INTO vaccinations("datetime", "ICnum", "postcode", "notify", "confirmation")
-VALUES('202112311200', '012345678910', 44000, 0, 0)
-'''
-#!todo beautify data exports [no can do]
-#!todo better user info outputs [no can do]
+#startMenu()
+vaccine()
