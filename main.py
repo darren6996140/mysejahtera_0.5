@@ -1,13 +1,13 @@
 # *********************************************************
 # Program: TL4V_G2.py
 # Course: PSP0101 PROBLEM SOLVING AND PROGRAM DESIGN
-# Class: TL1
+# Class: TL4
 # Trimester: 2115
 # Year: 2021/22 Trimester 1
-# Member_1: ID | NAME | PHONES
-# Member_2: ID | NAME | PHONES
-# Member_3: ID | NAME | PHONES
-# Member_4: ID | NAME | PHONES
+# Member_1: 1211102809 | LIAU KAI ZE | PHONES
+# Member_2: 1211102810 | LAI CHENG YUNG | PHONES
+# Member_3: 1211102861 | TAN JING YAN | PHONES
+# Member_4: 1211103533 | CHONG ZHI XUAN | PHONES
 # *********************************************************
 # Task Distribution
 # Member_1: Core coding of the program
@@ -32,7 +32,7 @@ import hashlib
 import math
 
 #___________________________GLOBAL VARIABLES___________________________
-active = "010101010101"
+active = ""
 
 #____________________________USER DETAILS_______________________________
 # 1. username: 010101010101 password: qwertya postcode:41000
@@ -727,8 +727,6 @@ def status():
     print("----------------------------COVID 19 STATUS----------------------------\n")
     print("Please report your current COVID-19 status here.")
     print("Please type out your current status whether it be 'No symptoms', 'Casual contact', 'Close contact', 'Person Under Surveillance', 'Home Quarantine Order',  'COVID-19 positive, mild symptoms' or 'COVID-19 positive, severe symptoms'\n")
-    connection = sqlite3.connect("mysejahtera_0.5.db")
-    cursor = connection.cursor()
     while True:
         enter = str(input("Please enter status: "))
         if enter == "No symptoms":
@@ -770,11 +768,11 @@ def status():
 #function for users to update and view vaccination status
 def vaccine():
     global active
+    list=['[','(',']',')',',',"'"]
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute(f"SELECT consent FROM user WHERE ICnum='{active}'")
     oldConsent = str(cursor.fetchall())
-    list=['[','(',']',')',',',"'"]
     consent ="".join(i for i in oldConsent if i not in list)
     if consent == "0":
         print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.\n")
@@ -784,7 +782,9 @@ def vaccine():
             if cons == 1:
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
                 cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum = '{active}';")
-                cursor.execute(f"INSERT INTO vaccinations (ICnum, notify) VALUES ('{active}', 0)")
+                cursor.execute(f"SELECT postcode FROM user WHERE ICnum = '{active}';")
+                postcode = cursor.fetchall()
+                cursor.execute(f"INSERT INTO vaccinations (ICnum, postcode, notify) VALUES ('{active}','{postcode}', 0)")
                 print("You will be redirected back to main menu shortly.\n")
                 connection.commit()
                 connection.close()
@@ -804,7 +804,6 @@ def vaccine():
     elif consent == "1":
         cursor.execute(f"SELECT notify FROM vaccinations")
         oldNotify = str(cursor.fetchall())
-        list=['[','(',']',')',',',"'"]
         notify ="".join(i for i in oldNotify if i not in list)
         if notify == "1":
             cursor.execute(f"SELECT postcodePPV FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
@@ -914,7 +913,6 @@ def viewPersonalInfo():
     print("Redirecting back to personal information shortly.\n")
     personalInfo()
 
-#~~~~~~~~ADMINS~~~~~~~~
 #function to login for admin
 def loginAdmin():
     print("----------------------------ADMIN LOGIN----------------------------\n")
@@ -1010,7 +1008,7 @@ def vaccineManageAppoint():
        print(i)
 
     while True:
-        ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu): "))
+        ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu.): "))
         if ICnum == 0:
             print("You will be redirected shortly.")
             connection.close()
@@ -1025,7 +1023,9 @@ def vaccineManageAppoint():
                 cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
                 postcode = cursor.fetchall()
                 cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
+                print("Records updated.")
 
+#function to manage vaccinations
 def vaccineManage():
     print("----------------------------VACCINATION MANAGEMENT----------------------------\n")
     print("What would you like to do?")
@@ -1038,7 +1038,7 @@ def vaccineManage():
         if num == 1:
             newTableVaccinations()
         elif num == 2:
-            vaccineManage()
+            vaccineManageAppoint()
             break
         elif num == 3:
             mainMenuAdmin()
