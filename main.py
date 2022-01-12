@@ -144,12 +144,12 @@ def newTableVaccinations():
     "id" INTEGER NOT NULL,
     "datetime" TEXT NOT NULL,
     "ICnum" TEXT NOT NULL,
-    "postcode" INTEGER NOT NULL,
+    "postcodePPV" INTEGER NOT NULL,
     "notify" INTEGER NOT NULL,
     "confirmation" INTEGER NOT NULL,
     PRIMARY KEY("id"),
     FOREIGN KEY(ICnum) REFERENCES user(ICnum)
-    FOREIGN KEY(postcode) REFERENCES ppv(postcode)
+    FOREIGN KEY(postcodePPV) REFERENCES ppv(postcode)
     );"""
 
     cursor.execute(command)
@@ -767,7 +767,7 @@ def status():
     print("Your status has been successfully updated, you will be redirected back to the main menu shortly.")
     mainMenu()
 
-#!function for users to update and view vaccination status
+#function for users to update and view vaccination status
 def vaccine():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -783,9 +783,8 @@ def vaccine():
             cons = int(input("Please type a number: "))
             if cons == 1:
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
-                statement = f"UPDATE user SET consent = 1 WHERE ICnum = '{active}';"
-                cursor.execute(statement)
-                cursor.execute(f"INSERT INTO vaccinations (ICnum, notify) VALUES ('{active}', 1)")
+                cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum = '{active}';")
+                cursor.execute(f"INSERT INTO vaccinations (ICnum, notify) VALUES ('{active}', 0)")
                 print("You will be redirected back to main menu shortly.\n")
                 connection.commit()
                 connection.close()
@@ -795,26 +794,28 @@ def vaccine():
                 print("Irresponsible.\n")
                 cursor.execute(f"UPDATE user SET consent = 2 WHERE ICnum='{active}'")
                 print("You will be redirected back to main menu shortly.\n")
+                connection.commit()
                 connection.close()
                 mainMenu()
                 break
             else:
                 print("Invalid input.\n")
 
-    elif consent == "2":
-        print("Irresponsible.")
-        mainMenu()
-
-    else:
+    elif consent == "1":
         cursor.execute(f"SELECT notify FROM vaccinations")
         oldNotify = str(cursor.fetchall())
         list=['[','(',']',')',',',"'"]
         notify ="".join(i for i in oldNotify if i not in list)
         if notify == "1":
-            cursor.execute(f"SELECT postcode FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
-            location = cursor.fetchall()
+            cursor.execute(f"SELECT postcodePPV FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
+            oldPostcode = str(cursor.fetchall())
+            postcode ="".join(i for i in oldPostcode if i not in list)
+            cursor.execute(f"SELECT name FROM ppv WHERE postcode='{postcode}'")
+            oldLocation = str(cursor.fetchall())
+            location ="".join(i for i in oldLocation if i not in list)
             cursor.execute(f"SELECT datetime FROM vaccinations WHERE ICnum='{active}'")
-            datetime = cursor.fetchall()
+            oldDatetime = str(cursor.fetchall())
+            datetime ="".join(i for i in oldDatetime if i not in list)
             print("You have been selected to be vaccinated at ",location, "during ",datetime, " (YYYYMMDDHHMM), would you be able to attend? (Type 1 for yes, type 2 for no)")
             while True:
                 confirm = int(input("Please enter a number: "))
@@ -823,6 +824,7 @@ def vaccine():
                     cursor.execute(f"UPDATE user SET vaccinationStatus = 1 WHERE ICnum='{active}'")
                     print("Great! See you then.")
                     print("Redirecting you to main menu shortly.")
+                    connection.commit()
                     connection.close()
                     mainMenu()
                     break
@@ -830,17 +832,30 @@ def vaccine():
                     cursor.execute(f"UPDATE vaccinations SET confirmation = 2, notify = 0 WHERE ICnum='{active}'")
                     print("Our administrators will give you a new appointment shortly.")
                     print("Redirecting you to main menu shortly.")
+                    connection.commit()
                     connection.close()
                     mainMenu()
                     break
                 else:
                     print("Invalid input.\n")
-        
         else:
-            print("Please be patient, our administrators are finding open appointments for you.")
-            print("Redirecting you to main menu shortly.")
-            connection.close()
-            mainMenu()
+            cursor.execute(f"SELECT vaccinationStatus FROM user WHERE ICnum='{active}'")
+            oldStatus = str(cursor.fetchall())
+            status ="".join(i for i in oldStatus if i not in list)
+            if status == "1":
+                print("Congratulations, you are already fully vaccinatied, thank you for your kind efforts.\n")
+                print("Redirecting you to main menu shortly.\n")
+                connection.close()
+                mainMenu()
+            else:
+                print("Please be patient, our administrators are finding open appointments for you.\n")
+                print("Redirecting you to main menu shortly.\n")
+                connection.close()
+                mainMenu()
+
+    elif consent == "2":
+        print("Irresponsible.")
+        mainMenu()
 
 #function to let users to view or edit personal info
 def personalInfo():
@@ -1221,5 +1236,4 @@ def mainMenuAdmin():
             print("Invalid input.\n")
 
 #call this for magic to happen
-#startMenu()
-vaccine()
+startMenu()
