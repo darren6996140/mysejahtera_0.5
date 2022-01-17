@@ -346,8 +346,7 @@ def deleteDataPPV():
     postcode = int(input("Please enter the postcode of the PPV to be deleted: "))
   
     #deletes the row according to postcode
-    statement = f"DELETE FROM ppv WHERE postcode='{postcode}';"
-    cursor.execute(statement)
+    cursor.execute(f"DELETE FROM ppv WHERE postcode='{postcode}';")
 
     connection.commit()
     connection.close()
@@ -361,8 +360,7 @@ def deleteDataCOVIDStats():
 
     date = str(input("Please enter the date of the statistics to be deleted: "))
   
-    statement = f"DELETE FROM covidstats WHERE date='{date}';"
-    cursor.execute(statement)
+    cursor.execute(f"DELETE FROM covidstats WHERE date='{date}';")
 
     connection.commit()
     connection.close()
@@ -376,8 +374,7 @@ def deleteDataVaccinationStats():
 
     date = str(input("Please enter the date of the statistics to be deleted: "))
   
-    statement = f"DELETE FROM vaccinationstats WHERE date='{date}';"
-    cursor.execute(statement)
+    cursor.execute(f"DELETE FROM vaccinationstats WHERE date='{date}';")
 
     connection.commit()
     connection.close()
@@ -719,8 +716,7 @@ def userRisk():
     #updates the risk of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-    statement = f"UPDATE user SET risk='{risk}' WHERE ICnum = '{active}';"
-    cursor.execute(statement)
+    cursor.execute(f"UPDATE user SET risk='{risk}' WHERE ICnum = '{active}';")
     connection.commit()
     connection.close()
 
@@ -764,8 +760,7 @@ def status():
     #updates the status of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
-    statement = f"UPDATE user SET status='{status}' WHERE ICnum = '{active}';"
-    cursor.execute(statement)
+    cursor.execute(f"UPDATE user SET status='{status}' WHERE ICnum = '{active}';")
     connection.commit()
     connection.close()
 
@@ -1026,8 +1021,7 @@ def vaccineManageAppoint():
             mainMenuAdmin()
             break
         else:
-            statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}'"
-            cursor.execute(statement)
+            cursor.execute(f"SELECT ICnum FROM user WHERE ICnum='{ICnum}'")
             if not cursor.fetchone():
                 print("No such person exists.")
             else:
