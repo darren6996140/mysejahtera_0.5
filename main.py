@@ -223,7 +223,7 @@ def addDataPPV():
 
     connection.commit()
     connection.close()
-    print("PPVs added, redirecting back to PPV management shortly.")
+    print("PPVs added, redirecting back to PPV management shortly\n")
     PPVManage()
 
 #function to add data into table "covidstats"
@@ -286,7 +286,7 @@ def updateDataPPV():
     patientsPerDay = int(input("New Patients Per Day: "))
   
     #updates the table of according to postcode
-    statement = f"UPDATE covidstats SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
+    statement = f"UPDATE ppv SET name='{name}', location='{location}', vaccineBrand='{vaccineBrand}', patientsPerDay='{patientsPerDay}' WHERE postcode = '{postcode}';"
     cursor.execute(statement)
 
     connection.commit()
@@ -343,7 +343,7 @@ def deleteDataPPV():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
 
-    postcode = int(input("Please enter the post code of the PPV to be deleted: "))
+    postcode = int(input("Please enter the postcode of the PPV to be deleted: "))
   
     #deletes the row according to postcode
     statement = f"DELETE FROM ppv WHERE postcode='{postcode}';"
@@ -387,7 +387,8 @@ def deleteDataVaccinationStats():
 #>>>>>>>>>>>>>DATA EXPORTS>>>>>>>>>>>>>
 #function to choose what should it be sorted by
 def dataExportUser():
-    instruct = str(input("How should the table be sorted? (normal, risk, status, age, postcode)"))
+    print("How should the table be sorted?")
+    instruct = str(input("Please enter a command (normal, risk, status, age, postcode): "))
     while True:
         if instruct == "normal":
             dataExportUserNormal()
@@ -477,6 +478,7 @@ def dataExportPPV():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export all data in table "vaccinations" according to datetime
@@ -499,6 +501,7 @@ def dataExportCOVIDStats():
     #Selects everything from table "covidstats"
     cursor.execute(f"SELECT * FROM covidstats")
     output = cursor.fetchall()
+    print("Date (YYYY,MM,DD), New Cases, Recoveries, Deaths, Active Cases, Cumulative Cases, Tests Done")
     for i in output:
        print(i)
     connection.close()
@@ -539,9 +542,9 @@ def signup():
   
     #Insert values above entered from user
     cursor.execute("""
-    INSERT INTO user (ICnum, name, password, age, phone, address, postcode, gender, userStatus)
-    VALUES (?,?,?,?,?,?,?,?,?)
-    """, (ICnum, name, password, age, phone, address, postcode, gender, 0))
+    INSERT INTO user (ICnum, name, password, age, phone, address, postcode, gender, consent, userStatus)
+    VALUES (?,?,?,?,?,?,?,?,?,?)
+    """, (ICnum, name, password, age, phone, address, postcode, gender, 0, 0))
 
     #To save the changes in the files
     connection.commit()
@@ -691,7 +694,6 @@ def userRisk():
         else:
             print("Invalid input.\n")
 
-    
     print("Please state your occupation.\n")
     print("Type 5 if you are a frontline worker, 4 if your job requires face to face meets, 3 if your job requires you to move around, 2 if your job can be done at home and 1 if you are unemployed/staying at home full time.\n")
     
@@ -699,7 +701,6 @@ def userRisk():
         job = int(input("Enter here: "))
         if job > 0 and job < 6:
             risk = risk + job/10
-            print(risk)
             break
         else:
             print("Invalid number, please try again.")
@@ -783,8 +784,9 @@ def vaccine():
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
                 cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum = '{active}';")
                 cursor.execute(f"SELECT postcode FROM user WHERE ICnum = '{active}';")
-                postcode = cursor.fetchall()
-                cursor.execute(f"INSERT INTO vaccinations (ICnum, postcode, notify) VALUES ('{active}','{postcode}', 0)")
+                oldPostcode = str(cursor.fetchall())
+                postcode ="".join(i for i in oldPostcode if i not in list)
+                cursor.execute(f"INSERT INTO vaccinations (ICnum, postcodePPV, notify, confirmation) VALUES ('{active}','{postcode}', 0, 0)")
                 print("You will be redirected back to main menu shortly.\n")
                 connection.commit()
                 connection.close()
@@ -842,7 +844,7 @@ def vaccine():
             oldStatus = str(cursor.fetchall())
             status ="".join(i for i in oldStatus if i not in list)
             if status == "1":
-                print("Congratulations, you are already fully vaccinatied, thank you for your kind efforts.\n")
+                print("Congratulations, you are already fully vaccinated, thank you for your kind efforts.\n")
                 print("Redirecting you to main menu shortly.\n")
                 connection.close()
                 mainMenu()
@@ -925,7 +927,7 @@ def loginAdmin():
     statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}' AND userStatus = 1;"
     cursor.execute(statement)
     if not cursor.fetchone():
-        print("Login failed, please try again./n")
+        print("Login failed, please try again.\n")
         startMenu()
     else:
         connection.close()
@@ -994,6 +996,7 @@ def PPVManage():
 def vaccineManageAppoint():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
+    list=['[','(',']',')',',',"'"]
 
     print("This is the list of users that are waiting for an appointment.")
     cursor.execute(f"SELECT * FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
@@ -1009,7 +1012,7 @@ def vaccineManageAppoint():
 
     while True:
         ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu.): "))
-        if ICnum == 0:
+        if ICnum == "0":
             print("You will be redirected shortly.")
             connection.close()
             mainMenuAdmin()
@@ -1020,9 +1023,11 @@ def vaccineManageAppoint():
             if not cursor.fetchone():
                 print("No such person exists.")
             else:
-                cursor.execute(f"SELECT postcode FROM users WHERE ICnum='{ICnum}'")
-                postcode = cursor.fetchall()
-                cursor.execute(f"UPDATE vaccinations SET notify = 1 AND confirmation = 0 AND postcode='{postcode}' WHERE ICnum='{ICnum}' ")
+                cursor.execute(f"SELECT postcode FROM user WHERE ICnum='{ICnum}'")
+                oldPostcode = str(cursor.fetchall())
+                postcode ="".join(i for i in oldPostcode if i not in list)
+                cursor.execute(f"UPDATE vaccinations SET notify = 1 , confirmation = 0 , postcodePPV='{postcode}' WHERE ICnum='{ICnum}' ")
+                connection.commit()
                 print("Records updated.")
 
 #function to manage vaccinations
