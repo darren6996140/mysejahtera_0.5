@@ -193,8 +193,8 @@ def newTableVaccinationStats():
     "totaldose1" INTEGER NOT NULL,
     "totaldose2" INTEGER NOT NULL,
     "totalbooster" INTEGER NOT NULL,
-    "grandtotal" INTEGER NOT NULL,
-    PRIMARY KEY("date")
+    "grandtotaate")l" INTEGER NOT NULL,
+    PRIMARY KEY("d
     );"""
 
     cursor.execute(command)
@@ -430,6 +430,7 @@ def dataExportUserRisk():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export table "user" according to status
@@ -442,6 +443,7 @@ def dataExportUserStatus():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export table "user" according to age
@@ -454,6 +456,7 @@ def dataExportUserAge():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export table "user" according to postcode
@@ -466,6 +469,7 @@ def dataExportUserPostcode():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export all data in table "ppv"
@@ -491,6 +495,7 @@ def dataExportVaccinations():
     output = cursor.fetchall()
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export all data in table "covidstats"
@@ -504,6 +509,7 @@ def dataExportCOVIDStats():
     print("Date (YYYY,MM,DD), New Cases, Recoveries, Deaths, Active Cases, Cumulative Cases, Tests Done")
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export all data in table "vaccinationstats"
@@ -517,6 +523,7 @@ def dataExportVaccinationStats():
     print("Date (YYYY,MM,DD), Dose 1, Dose 2, Boosters, Total Dose 1, Total Dose 2, Total Booster, Total Doses Given")
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #*************************USER INTERACTION FUNCTIONS*************************
@@ -550,7 +557,7 @@ def signup():
     connection.commit()
     connection.close()
 
-    print("Signup successful, you will be redirected shortly.")
+    print("\nSignup successful, you will be redirected shortly.\n")
     #Redirect to start menu page
     startMenu()
 
@@ -707,7 +714,7 @@ def userRisk():
             
     #rounds down the risk to an integer
     risk = math.floor(risk)
-    print("Your updated risk is", risk)
+    print("\nYour updated risk is", risk)
     
     #updates the risk of the user in the database 
     connection = sqlite3.connect("mysejahtera_0.5.db")
@@ -718,7 +725,7 @@ def userRisk():
     connection.close()
 
     #redirect back to main menu
-    print("Your risk assessment has been successfully completed, you will be redirected back to the main menu shortly.")
+    print("\nYour risk assessment has been successfully completed, you will be redirected back to the main menu shortly.\n")
     mainMenu()
 
 #function for users to update status
@@ -881,6 +888,7 @@ def personalInfo():
 
 #function to let users to update personal info
 def editPersonalInfo():
+    global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     print("\nPlease enter the following details: \n")
