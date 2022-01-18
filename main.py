@@ -1002,13 +1002,19 @@ def vaccineManageAppoint():
     list=['[','(',']',')',',',"'"]
 
     print("This is the list of users that are waiting for an appointment.")
-    cursor.execute(f"SELECT * FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
+    cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
+    oldICnum = str(cursor.fetchall())
+    ICnum ="".join(i for i in oldICnum if i not in list)
+    cursor.execute(f"SELECT ICnum, name FROM user WHERE ICnum='{ICnum}';")
     output = cursor.fetchall()
     for i in output:
        print(i)
 
     print("This is the list of users that rejected the first appointment are waiting for a 2nd appointment.")
-    cursor.execute(f"SELECT * FROM vaccinations WHERE notify = 0 AND confirmation = 2;")
+    cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 2;")
+    oldICnum = str(cursor.fetchall())
+    ICnum ="".join(i for i in oldICnum if i not in list)
+    cursor.execute(f"SELECT ICnum, name FROM user WHERE ICnum='{ICnum}';")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -1028,7 +1034,9 @@ def vaccineManageAppoint():
                 cursor.execute(f"SELECT postcode FROM user WHERE ICnum='{ICnum}'")
                 oldPostcode = str(cursor.fetchall())
                 postcode ="".join(i for i in oldPostcode if i not in list)
-                cursor.execute(f"UPDATE vaccinations SET notify = 1 , confirmation = 0 , postcodePPV='{postcode}' WHERE ICnum='{ICnum}' ")
+                datetime = str(input("Please enter the date and time for vaccination: "))
+                statement = f"UPDATE vaccinations SET datetime='{datetime}', notify = 1 , confirmation = 0 , postcodePPV='{postcode}' WHERE ICnum='{ICnum}' "
+                cursor.execute(statement)
                 connection.commit()
                 print("Records updated.")
 
