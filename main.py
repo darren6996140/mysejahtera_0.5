@@ -193,8 +193,8 @@ def newTableVaccinationStats():
     "totaldose1" INTEGER NOT NULL,
     "totaldose2" INTEGER NOT NULL,
     "totalbooster" INTEGER NOT NULL,
-    "grandtotaate")l" INTEGER NOT NULL,
-    PRIMARY KEY("d
+    "grandtotal" INTEGER NOT NULL,
+    PRIMARY KEY("date")
     );"""
 
     cursor.execute(command)
