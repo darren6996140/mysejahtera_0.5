@@ -10,10 +10,10 @@
 # Member_4: 1211103533 | CHONG ZHI XUAN | PHONES
 # *********************************************************
 # Task Distribution
-# Member_1: Core coding of the program
-# Member_2: Documentation/Report
-# Member_3: Presentation
-# Member_4: Program testing
+# Member_1: Everything except databases
+# Member_2: Data exports, Report
+# Member_3: Adding data, updating data, deleting data
+# Member_4: Testing, debugging and research
 # *********************************************************
 
 #_______________________ACKNOWLEDGEMENTS___________________________
@@ -411,7 +411,7 @@ def dataExportUserNormal():
     cursor = connection.cursor()
 
     #Selects everything from table "user"
-    cursor.execute(f"SELECT * FROM user")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -423,7 +423,7 @@ def dataExportUserRisk():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts risk by ascending order
-    cursor.execute(f"SELECT * FROM user ORDER BY risk;")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY risk;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -436,7 +436,7 @@ def dataExportUserStatus():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts status by ascending order
-    cursor.execute(f"SELECT * FROM user ORDER BY status;")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY status;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -449,7 +449,7 @@ def dataExportUserAge():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts age by ascending order
-    cursor.execute(f"SELECT * FROM user ORDER BY age;")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY age;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -462,7 +462,7 @@ def dataExportUserPostcode():
     cursor = connection.cursor()
 
     #Selects everything from table "user" and sorts postcode by ascending order
-    cursor.execute(f"SELECT * FROM user ORDER BY postcode;")
+    cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY postcode;")
     output = cursor.fetchall()
     for i in output:
        print(i)
@@ -772,6 +772,7 @@ def status():
 def vaccine():
     global active
     list=['[','(',']',')',',',"'"]
+    list2=['[','(',']',')',"'"]
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute(f"SELECT consent FROM user WHERE ICnum='{active}'")
@@ -806,16 +807,16 @@ def vaccine():
                 print("Invalid input.\n")
 
     elif consent == "1":
-        cursor.execute(f"SELECT notify FROM vaccinations")
+        cursor.execute(f"SELECT notify FROM vaccinations WHERE ICnum='{active}'")
         oldNotify = str(cursor.fetchall())
         notify ="".join(i for i in oldNotify if i not in list)
         if notify == "1":
-            cursor.execute(f"SELECT postcodePPV FROM vaccinations INNER JOIN ppv WHERE ICnum='{active}'")
+            cursor.execute(f"SELECT postcodePPV FROM vaccinations WHERE ICnum='{active}'")
             oldPostcode = str(cursor.fetchall())
             postcode ="".join(i for i in oldPostcode if i not in list)
             cursor.execute(f"SELECT name FROM ppv WHERE postcode='{postcode}'")
             oldLocation = str(cursor.fetchall())
-            location ="".join(i for i in oldLocation if i not in list)
+            location ="".join(i for i in oldLocation if i not in list2)
             cursor.execute(f"SELECT datetime FROM vaccinations WHERE ICnum='{active}'")
             oldDatetime = str(cursor.fetchall())
             datetime ="".join(i for i in oldDatetime if i not in list)
@@ -1005,19 +1006,13 @@ def vaccineManageAppoint():
     cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
     oldICnum = str(cursor.fetchall())
     ICnum ="".join(i for i in oldICnum if i not in list)
-    cursor.execute(f"SELECT ICnum, name FROM user WHERE ICnum='{ICnum}';")
-    output = cursor.fetchall()
-    for i in output:
-       print(i)
+    print(ICnum)
 
     print("This is the list of users that rejected the first appointment are waiting for a 2nd appointment.")
     cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 2;")
     oldICnum = str(cursor.fetchall())
     ICnum ="".join(i for i in oldICnum if i not in list)
-    cursor.execute(f"SELECT ICnum, name FROM user WHERE ICnum='{ICnum}';")
-    output = cursor.fetchall()
-    for i in output:
-       print(i)
+    print(ICnum)
 
     while True:
         ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu.): "))
