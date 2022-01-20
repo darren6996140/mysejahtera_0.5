@@ -52,10 +52,10 @@ Assignment presentation is to be held in week 14. Each group will be given 10 mi
 You need to attend the presentation to justify your contribution and work. Those who are absent from the presentation will get ZERO mark for the whole assignment.
 To make testing easier and save time during presentation, your program shall have the following features:
 i. Never clear screen.
-ii. Pre-load with at least 20 public users (when the program starts).
-iii. Pre-load with at least 3 vaccination centers, each with at least 3 assigned appointment.
+ii. Pre-load with at least 20 public users (when the program starts). [DONE]
+iii. Pre-load with at least 3 vaccination centers, each with at least 3 assigned appointment. [DONE]
 iv. Pre-load with at least an administrator.    [DONE]
-v. Pre-load with at least 3 users each in various postcode, age, risk groups and priority groups.
+v. Pre-load with at least 3 users each in various postcode, age, risk groups and priority groups. [DONE]
 You tutor will announce the arrangement and timeslot for the presentation.
 
 Plagiarism [DONE (no way in hell)] 
