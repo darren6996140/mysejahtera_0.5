@@ -106,7 +106,7 @@ def newTableUser():
     PRIMARY KEY("ICnum")
     );"""
     
-    # execute the statement
+    # execute the statement in "command" with the cursor 
     cursor.execute(command)
     #save the data
     connection.commit()
@@ -386,6 +386,7 @@ def deleteDataVaccinationStats():
 def dataExportUser():
     print("How should the table be sorted?")
     instruct = str(input("Please enter a command (normal, risk, status, age, postcode): "))
+
     while True:
         if instruct == "normal":
             dataExportUserNormal()
@@ -413,8 +414,11 @@ def dataExportUserNormal():
     #Selects everything from table "user"
     cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user")
     output = cursor.fetchall()
+    print("ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent")
+
     for i in output:
        print(i)
+    print("\n")
     connection.close()
 
 #function to export table "user" according to risk
@@ -425,6 +429,8 @@ def dataExportUserRisk():
     #Selects everything from table "user" and sorts risk by ascending order
     cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY risk;")
     output = cursor.fetchall()
+    print("ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent")
+
     for i in output:
        print(i)
     print("\n")
@@ -438,6 +444,8 @@ def dataExportUserStatus():
     #Selects everything from table "user" and sorts status by ascending order
     cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY status;")
     output = cursor.fetchall()
+    print("ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent")
+
     for i in output:
        print(i)
     print("\n")
@@ -451,6 +459,8 @@ def dataExportUserAge():
     #Selects everything from table "user" and sorts age by ascending order
     cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY age;")
     output = cursor.fetchall()
+    print("ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent")
+
     for i in output:
        print(i)
     print("\n")
@@ -464,6 +474,8 @@ def dataExportUserPostcode():
     #Selects everything from table "user" and sorts postcode by ascending order
     cursor.execute(f"SELECT ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent FROM user ORDER BY postcode;")
     output = cursor.fetchall()
+    print("ICnum, name, age, phone, address, postcode, gender, risk, status, vaccinationStatus, consent")
+
     for i in output:
        print(i)
     print("\n")
@@ -564,17 +576,19 @@ def login():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     print("\n----------------------------LOGIN----------------------------\n")
+
     while True:
         ICnum = str(input("Enter IC number: "))
         rawPassword = str(input("Password: "))
         hash_object = hashlib.sha512(rawPassword.encode())
         password = hash_object.hexdigest()
+
         statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}';"
         cursor.execute(statement)
         if not cursor.fetchone():  # An empty result evaluates to False.
             print("Login failed, please try again.\n")
         else:
-            print("Welcome!")
+            print("Welcome!\n")
             #the line below acts as a cookie to record the active user
             active = ICnum
             connection.close()
@@ -731,6 +745,7 @@ def status():
     print("----------------------------COVID 19 STATUS----------------------------\n")
     print("Please report your current COVID-19 status here.")
     print("Please type out your current status whether it be 'No symptoms', 'Casual contact', 'Close contact', 'Person Under Surveillance', 'Home Quarantine Order',  'COVID-19 positive, mild symptoms' or 'COVID-19 positive, severe symptoms'\n")
+
     while True:
         enter = str(input("Please enter status: "))
         if enter == "No symptoms":
@@ -773,28 +788,36 @@ def vaccine():
     global active
     list=['[','(',']',')',',',"'"]
     list2=['[','(',']',')',"'"]
+
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     cursor.execute(f"SELECT consent FROM user WHERE ICnum='{active}'")
     oldConsent = str(cursor.fetchall())
     consent ="".join(i for i in oldConsent if i not in list)
+
     if consent == "0":
         print("Welcome to the COVID-19 vaccination programme, to aid our country to defeat this virus, all able bodied citizen must recieve their COVID-19 vaccine.\n")
         print("Do you consent to recieving the COVID-19 vaccination? (Type 1 if you do consent, type 2 if you do not consent.)\n")
+
         while True:
             cons = int(input("Please type a number: "))
+            
             if cons == 1:
                 print("Congratulations, your COVID-19 vaccine appointment will arrive in a few days, please be patient.\n")
                 cursor.execute(f"UPDATE user SET consent = 1 WHERE ICnum = '{active}';")
                 cursor.execute(f"SELECT postcode FROM user WHERE ICnum = '{active}';")
+
+                #Creates a new record in table vaccinations for a new user
                 oldPostcode = str(cursor.fetchall())
                 postcode ="".join(i for i in oldPostcode if i not in list)
                 cursor.execute(f"INSERT INTO vaccinations (ICnum, postcodePPV, notify, confirmation) VALUES ('{active}','{postcode}', 0, 0)")
+
                 print("You will be redirected back to main menu shortly.\n")
                 connection.commit()
                 connection.close()
                 mainMenu()
                 break
+
             elif cons == 2:
                 print("Irresponsible.\n")
                 cursor.execute(f"UPDATE user SET consent = 2 WHERE ICnum='{active}'")
@@ -803,6 +826,7 @@ def vaccine():
                 connection.close()
                 mainMenu()
                 break
+
             else:
                 print("Invalid input.\n")
 
@@ -810,47 +834,58 @@ def vaccine():
         cursor.execute(f"SELECT notify FROM vaccinations WHERE ICnum='{active}'")
         oldNotify = str(cursor.fetchall())
         notify ="".join(i for i in oldNotify if i not in list)
+
         if notify == "1":
+            #Gets all necessary information to be given to user
             cursor.execute(f"SELECT postcodePPV FROM vaccinations WHERE ICnum='{active}'")
             oldPostcode = str(cursor.fetchall())
             postcode ="".join(i for i in oldPostcode if i not in list)
+
             cursor.execute(f"SELECT name FROM ppv WHERE postcode='{postcode}'")
             oldLocation = str(cursor.fetchall())
             location ="".join(i for i in oldLocation if i not in list2)
+
             cursor.execute(f"SELECT datetime FROM vaccinations WHERE ICnum='{active}'")
             oldDatetime = str(cursor.fetchall())
             datetime ="".join(i for i in oldDatetime if i not in list)
+
             print("You have been selected to be vaccinated at ",location, "during ",datetime, " (YYYYMMDDHHMM), would you be able to attend? (Type 1 for yes, type 2 for no)")
             while True:
                 confirm = int(input("Please enter a number: "))
                 if confirm == 1:
                     cursor.execute(f"UPDATE vaccinations SET confirmation = 1, notify = 0 WHERE ICnum='{active}'")
                     cursor.execute(f"UPDATE user SET vaccinationStatus = 1 WHERE ICnum='{active}'")
+
                     print("Great! See you then.")
                     print("Redirecting you to main menu shortly.")
                     connection.commit()
                     connection.close()
                     mainMenu()
                     break
+
                 elif confirm == 2:
                     cursor.execute(f"UPDATE vaccinations SET confirmation = 2, notify = 0 WHERE ICnum='{active}'")
-                    print("Our administrators will give you a new appointment shortly.")
-                    print("Redirecting you to main menu shortly.")
+                    print("\nOur administrators will give you a new appointment shortly.")
+                    print("Redirecting you to main menu shortly.\n")
                     connection.commit()
                     connection.close()
                     mainMenu()
                     break
+
                 else:
                     print("Invalid input.\n")
+
         else:
             cursor.execute(f"SELECT vaccinationStatus FROM user WHERE ICnum='{active}'")
             oldStatus = str(cursor.fetchall())
             status ="".join(i for i in oldStatus if i not in list)
+
             if status == "1":
                 print("Congratulations, you are already fully vaccinated, thank you for your kind efforts.\n")
                 print("Redirecting you to main menu shortly.\n")
                 connection.close()
                 mainMenu()
+
             else:
                 print("Please be patient, our administrators are finding open appointments for you.\n")
                 print("Redirecting you to main menu shortly.\n")
@@ -867,6 +902,7 @@ def personalInfo():
     print("Type 1 to view your information.")
     print("Type 2 to edit your information.")
     print("Type 3 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -888,6 +924,7 @@ def editPersonalInfo():
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     print("\nPlease enter the following details: \n")
+
     name = str(input("Full Name: "))
     age = int(input("Age: "))
     phone = str(input("Phone number (without dash): "))
@@ -916,20 +953,23 @@ def viewPersonalInfo():
     for i in output:
        print(i)
     connection.close()
-    print("Redirecting back to personal information shortly.\n")
+    print("\nRedirecting back to personal information shortly.\n")
     personalInfo()
 
 #function to login for admin
 def loginAdmin():
     print("----------------------------ADMIN LOGIN----------------------------\n")
+
     ICnum = str(input("Enter ID: "))
     rawPassword = str(input("Password: "))
     hash_object = hashlib.sha512(rawPassword.encode())
     password = hash_object.hexdigest()
+
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
     statement = f"SELECT ICnum FROM user WHERE ICnum='{ICnum}' AND password = '{password}' AND userStatus = 1;"
     cursor.execute(statement)
+
     if not cursor.fetchone():
         print("Login failed, please try again.\n")
         startMenu()
@@ -945,6 +985,7 @@ def userManage():
     print("Type 1 to create table user.")
     print("Type 2 to view all user data.")
     print("Type 3 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -971,6 +1012,7 @@ def PPVManage():
     print("Type 4 to update a PPV's details.")
     print("Type 5 to remove a PPV.")
     print("Type 6 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1006,33 +1048,75 @@ def vaccineManageAppoint():
     cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 0;")
     oldICnum = str(cursor.fetchall())
     ICnum ="".join(i for i in oldICnum if i not in list)
-    print(ICnum)
+    #Splits the IC numbers into an array such that multiple users will display correctly
+    IC = ICnum.split(" ")
 
-    print("This is the list of users that rejected the first appointment are waiting for a 2nd appointment.")
+    #A loop to print out names, IC numbers and risk for each user
+    while True:
+        if IC[0] == "":
+            print("\n")
+            break
+        else:
+            for i in IC:
+                cursor.execute(f"SELECT name FROM user WHERE ICnum = '{i}';")
+                oldName = str(cursor.fetchall())
+                name ="".join(i for i in oldName if i not in list)
+
+                cursor.execute(f"SELECT risk FROM user WHERE ICnum = '{i}';")
+                oldRisk = str(cursor.fetchall())
+                risk = "".join(i for i in oldRisk if i not in list)
+                print (i, ",", name, ", with risk ", risk)
+            break
+        
+    print("\nThis is the list of users that rejected the first appointment are waiting for a 2nd appointment.")
+
     cursor.execute(f"SELECT ICnum FROM vaccinations WHERE notify = 0 AND confirmation = 2;")
     oldICnum = str(cursor.fetchall())
     ICnum ="".join(i for i in oldICnum if i not in list)
-    print(ICnum)
+    IC = ICnum.split(" ")
 
     while True:
-        ICnum = str(input("Which user would you like to make an appointment to? (Type 0 to return to main menu.): "))
+        if IC[0] == "":
+            print("\n")
+            break
+
+        else:
+            for i in IC:
+                cursor.execute(f"SELECT name FROM user WHERE ICnum = '{i}';")
+                oldName = str(cursor.fetchall())
+                name ="".join(i for i in oldName if i not in list)
+
+                cursor.execute(f"SELECT risk FROM user WHERE ICnum = '{i}';")
+                oldRisk = str(cursor.fetchall())
+                risk = "".join(i for i in oldRisk if i not in list)
+                print (i, ",", name, ", with risk ", risk)
+            break
+
+    while True:
+        ICnum = str(input("\nWhich user would you like to make an appointment to? (Type 0 to return to main menu.): "))
+
         if ICnum == "0":
             print("You will be redirected shortly.")
             connection.close()
             mainMenuAdmin()
             break
+
         else:
             cursor.execute(f"SELECT ICnum FROM user WHERE ICnum='{ICnum}'")
             if not cursor.fetchone():
                 print("No such person exists.")
+
             else:
                 cursor.execute(f"SELECT postcode FROM user WHERE ICnum='{ICnum}'")
                 oldPostcode = str(cursor.fetchall())
                 postcode ="".join(i for i in oldPostcode if i not in list)
+
                 datetime = str(input("Please enter the date and time for vaccination: "))
+
                 statement = f"UPDATE vaccinations SET datetime='{datetime}', notify = 1 , confirmation = 0 , postcodePPV='{postcode}' WHERE ICnum='{ICnum}' "
                 cursor.execute(statement)
                 connection.commit()
+
                 print("Records updated.")
 
 #function to manage vaccinations
@@ -1042,6 +1126,7 @@ def vaccineManage():
     print("Type 1 to create table vaccinations.")
     print("Type 2 to manage vaccinations.")
     print("Type 3 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1063,6 +1148,7 @@ def statsManage():
     print("Type 1 for COVID-19 statistics.")
     print("Type 2 for vaccination statistics.")
     print("Type 3 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1087,6 +1173,7 @@ def covidStatsManage():
     print("Type 4 to update COVID-19 statistics.")
     print("Type 5 to remove COVID-19 statistics.")
     print("Type 6 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1122,6 +1209,7 @@ def vaccinationStatsManage():
     print("Type 4 to update vaccination statistics.")
     print("Type 5 to remove vaccination statistics.")
     print("Type 6 to return to main menu.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1155,6 +1243,7 @@ def startMenu():
     print("Enter 1 for login.")
     print("Enter 2 for sign up.")
     print("Enter 3 for admin login.\n")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1175,6 +1264,7 @@ def mainMenu():
     global active
     connection = sqlite3.connect("mysejahtera_0.5.db")
     cursor = connection.cursor()
+
     cursor.execute(f"SELECT name FROM user WHERE ICnum='{active}'")
     oldName = str(cursor.fetchall())
     #for removing unnecessary characters
@@ -1188,6 +1278,7 @@ def mainMenu():
     print("Type 3 for updating personal information.")
     print("Type 4 for current COVID-19 updates.")
     print("Type 5 to log out.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
@@ -1203,10 +1294,13 @@ def mainMenu():
         elif num == 4:
             print("\nThis is the list of COVID-19 statistics starting from 1st January 2022\n")
             dataExportCOVIDStats()
-            print("\nThis is the list of vaccination statistics starting from 1st January 2022\n")
+
+            print("This is the list of vaccination statistics starting from 1st January 2022\n")
             dataExportVaccinationStats()
-            print("\nRedirecting to main menu shortly. \n")
+
+            print("Redirecting to main menu shortly.\n")
             mainMenu()
+
             break
         elif num == 5:
             logout()
@@ -1224,6 +1318,7 @@ def mainMenuAdmin():
     print("Type 3 for vaccination management.")
     print("Type 4 for COVID-19 statistics management.")
     print("Type 5 to logout.")
+
     while True:
         num = int(input("Enter a number: "))
         print("\n-------------------------------------------------------------\n")
