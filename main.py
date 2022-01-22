@@ -489,6 +489,7 @@ def dataExportPPV():
     #Selects everything from table "ppv"
     cursor.execute(f"SELECT * FROM ppv")
     output = cursor.fetchall()
+    print("Postcode, name, location, vaccine brand, patients per day.")
     for i in output:
        print(i)
     print("\n")
@@ -502,6 +503,7 @@ def dataExportVaccinations():
     #Selects everything from table "vaccinations" and sorts datetime by ascending order
     cursor.execute(f"SELECT * FROM vaccinations ORDER BY datetime;")
     output = cursor.fetchall()
+    print("ID, datetime, IC number, postcode, notify, confirmation.")
     for i in output:
        print(i)
     print("\n")
@@ -1125,7 +1127,8 @@ def vaccineManage():
     print("What would you like to do?")
     print("Type 1 to create table vaccinations.")
     print("Type 2 to manage vaccinations.")
-    print("Type 3 to return to main menu.")
+    print("Type 3 to show vaccination records.")
+    print("Type 4 to return to main menu.")
 
     while True:
         num = int(input("Enter a number: "))
@@ -1136,6 +1139,10 @@ def vaccineManage():
             vaccineManageAppoint()
             break
         elif num == 3:
+            dataExportVaccinations()
+            vaccineManage()
+            break
+        elif num == 4:
             mainMenuAdmin()
             break
         else:
